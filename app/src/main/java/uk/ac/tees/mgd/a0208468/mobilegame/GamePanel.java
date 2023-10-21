@@ -4,26 +4,60 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Random;
+
+import uk.ac.tees.mgd.a0208468.mobilegame.entities.GameCharacters;
+
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
+
+    private GameLoop gameLoop;
     private Paint paint = new Paint();
+    private SurfaceHolder holder;
+    private Random rand = new Random();
+    private float x, y;
+
 
     public GamePanel(Context context) {
         super(context);
-        getHolder().addCallback(this);
+        holder = getHolder();
+        holder.addCallback(this);
         paint.setColor(Color.BLUE);
+        gameLoop = new GameLoop(this);
+    }
+
+    public void render(){
+        Canvas canvas = holder.lockCanvas();
+        canvas.drawColor(Color.BLACK);
+        canvas.drawBitmap(GameCharacters.PLAYER.getSprite(14, 0), x, y, null);
+
+        holder.unlockCanvasAndPost(canvas);
+    }
+
+    public void update(double delta){
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            x = event.getX() - (24 * 8); //half of sprite size, multiplied by sprite scaleSize
+            y = event.getY() - (24 * 8);
+        }
+
+        return true;
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        Canvas canvas = holder.lockCanvas();
-
-        canvas.drawRect(50, 50, 100, 100, paint);
-        holder.unlockCanvasAndPost(canvas);
+        gameLoop.startGameLoop();
     }
 
     @Override
