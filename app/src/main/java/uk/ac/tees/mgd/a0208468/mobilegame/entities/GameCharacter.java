@@ -1,25 +1,27 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.entities;
 
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_CHAR_SIZE;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.MainActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.R;
+import uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants;
+import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
 
-public enum GameCharacters {
+public enum GameCharacter implements BitmapMethods {
     PLAYER(R.drawable.player_sprite_sheet);
 
     private Bitmap spriteSheet;
     private Bitmap[][] sprites = new Bitmap[24][8]; //sprite size = 48x48
-    private BitmapFactory.Options options = new BitmapFactory.Options();
-    private int scaleSize = 8;
 
-    GameCharacters(int redID) {
+    GameCharacter(int resID) {
         options.inScaled = false;
-        spriteSheet = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), redID, options);
+        spriteSheet = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options);
         for(int j = 0; j < sprites.length; j++){
             for(int i = 0; i < sprites[j].length; i++){
-                sprites[j][i] = getScaledBitmap(Bitmap.createBitmap(spriteSheet, 48 * i, 48 * j, 48, 48));
+                sprites[j][i] = getScaledBitmap(Bitmap.createBitmap(spriteSheet, DEFAULT_CHAR_SIZE * i, DEFAULT_CHAR_SIZE * j, DEFAULT_CHAR_SIZE, DEFAULT_CHAR_SIZE));
             }
         }
     }
@@ -32,7 +34,5 @@ public enum GameCharacters {
         return sprites[yPosition][xPosition];
     }
 
-    private  Bitmap getScaledBitmap(Bitmap bitmap) {
-        return Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() * scaleSize, bitmap.getHeight() * scaleSize, false);
-    }
+
 }
