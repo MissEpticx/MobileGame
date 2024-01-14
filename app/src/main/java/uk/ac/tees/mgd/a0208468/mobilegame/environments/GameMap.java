@@ -15,6 +15,14 @@ public class GameMap {
         return spriteIds[yIndex][xIndex];
     }
 
+    public int getAnimSpriteId(int xIndex, int yIndex, int waterAnimX){
+        if(spriteIds[yIndex][xIndex] != 4){
+            return waterAnimX;
+        }
+        return spriteIds[yIndex][xIndex];
+    }
+
+
     public int getArrayWidth(){
         return spriteIds[0].length;
     }

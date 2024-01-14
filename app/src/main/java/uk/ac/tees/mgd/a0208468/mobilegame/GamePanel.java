@@ -1,7 +1,5 @@
 package uk.ac.tees.mgd.a0208468.mobilegame;
 
-import static uk.ac.tees.mgd.a0208468.mobilegame.MainActivity.GAME_HEIGHT;
-import static uk.ac.tees.mgd.a0208468.mobilegame.MainActivity.GAME_WIDTH;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_CHAR_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 
@@ -16,12 +14,10 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants;
-import uk.ac.tees.mgd.a0208468.mobilegame.entities.GameCharacter;
-import uk.ac.tees.mgd.a0208468.mobilegame.environments.GameMap;
+import uk.ac.tees.mgd.a0208468.mobilegame.entities.Player;
 import uk.ac.tees.mgd.a0208468.mobilegame.environments.MapManager;
 import uk.ac.tees.mgd.a0208468.mobilegame.inputs.TouchEvents;
 
@@ -32,16 +28,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     private Paint paint = new Paint();
     private SurfaceHolder holder;
     private Random rand = new Random();
-    private float playerX = GAME_WIDTH/2, playerY = GAME_HEIGHT/2;
-    private int playerAnimX, playerFaceDir = GameConstants.FaceDir.WALK_DOWN;
-    private int aniTick;
-    private int aniSpeed = 6;
+    private  int waterAnimX;
+    private int waterAniTick;
+    private int waterAniSpeed = 4;
     private PointF lastTouchDiff;
     private boolean movePlayer;
     private float cameraX, cameraY;
-    
-    // Map Test
     private MapManager mapManager;
+
+    private Player player;
 
     public GamePanel(Context context) {
         super(context);
@@ -51,30 +46,32 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         touchEvents = new TouchEvents(this);
         gameLoop = new GameLoop(this);
         mapManager = new MapManager();
+        player = new Player();
     }
 
     public void render(){
         Canvas canvas = holder.lockCanvas();
         canvas.drawColor(Color.BLACK);
+        mapManager.drawWater(canvas, waterAnimX);
         mapManager.draw(canvas);
-
         touchEvents.draw(canvas);
-
-        canvas.drawBitmap(GameCharacter.PLAYER.getSprite(playerFaceDir, playerAnimX), playerX-(TILE_SIZE + DEFAULT_CHAR_SIZE), playerY-(TILE_SIZE + DEFAULT_CHAR_SIZE), null);
+        drawPlayer(canvas);
 
         holder.unlockCanvasAndPost(canvas);
     }
 
+    private void drawPlayer(Canvas canvas){
+        canvas.drawBitmap(player.getGameCharType().getSprite(player.getFaceDir(), player.getAniIndex()),
+                player.getHitbox().left - (TILE_SIZE + DEFAULT_CHAR_SIZE),
+                player.getHitbox().top - (TILE_SIZE + DEFAULT_CHAR_SIZE),
+                null);
+    }
+
     public void update(double delta){
         updatePlayerMove(delta);
-
+        player.update(delta, movePlayer);
         mapManager.setCameraValues(cameraX, cameraY);
-
-
         updateAnimation(delta);
-
-
-
     }
 
     public void updatePlayerMove(double delta){
@@ -90,19 +87,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
         if (ySpeed > xSpeed){
             if(lastTouchDiff.y > 0){
-                if(!movePlayer){
-                    playerFaceDir = GameConstants.FaceDir.IDLE_DOWN;
-                } else {
-                    playerFaceDir = GameConstants.FaceDir.WALK_DOWN;
-                }
+                     player.setFaceDir(GameConstants.FaceDir.WALK_DOWN);
             } else{
-                playerFaceDir = GameConstants.FaceDir.WALK_UP;
+                player.setFaceDir(GameConstants.FaceDir.WALK_UP);
             }
         } else{
             if (lastTouchDiff.x > 0){
-                playerFaceDir = GameConstants.FaceDir.WALK_RIGHT;
+                player.setFaceDir(GameConstants.FaceDir.WALK_RIGHT);
             } else{
-                playerFaceDir = GameConstants.FaceDir.WALK_LEFT;
+                player.setFaceDir(GameConstants.FaceDir.WALK_LEFT);
             }
         }
 
@@ -126,43 +119,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         float deltaX = xSpeed * baseSpeed * -1;
         float deltaY = ySpeed * baseSpeed * -1;
 
-        if(mapManager.canWalkHere(playerX + (cameraX * -1) + (deltaX * -1) + pWidth, playerY + (cameraY * -1) + (deltaY * -1) + pHeight)){
+        if(mapManager.canWalkHere(player.getHitbox().left + (cameraX * -1) + (deltaX * -1) + pWidth, player.getHitbox().top + (cameraY * -1) + (deltaY * -1) + pHeight)){
             cameraX += deltaX;
             cameraY += deltaY;
         }
     }
 
     private void updateAnimation(double delta){
-        aniTick++;
-        if(!movePlayer){
-            switch (playerFaceDir){
-                case GameConstants.FaceDir.WALK_RIGHT:
-                    playerFaceDir = GameConstants.FaceDir.IDLE_RIGHT;
-                    break;
-                case GameConstants.FaceDir.WALK_LEFT:
-                    playerFaceDir = GameConstants.FaceDir.IDLE_LEFT;
-                    break;
-                case GameConstants.FaceDir.WALK_UP:
-                    playerFaceDir = GameConstants.FaceDir.IDLE_UP;
-                    break;
-                case GameConstants.FaceDir.WALK_DOWN:
-                    playerFaceDir = GameConstants.FaceDir.IDLE_DOWN;
-                    break;
-            }
-            if(aniTick >= aniSpeed){
-                aniTick = 0;
-                playerAnimX++;
-                if(playerAnimX >= 8) {
-                    playerAnimX = 0;
-                }
-            }
-        }
+        waterAniTick++;
 
-        if(aniTick >= aniSpeed){
-            aniTick = 0;
-            playerAnimX++;
-            if(playerAnimX >= 8){
-                playerAnimX = 0;
+        if(waterAniTick >= waterAniSpeed){
+            waterAniTick = 0;
+            waterAnimX++;
+            if(waterAnimX >= 4){
+                waterAnimX = 0;
             }
         }
     }

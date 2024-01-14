@@ -1,8 +1,10 @@
 package uk.ac.tees.mgd.a0208468.mobilegame;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(new GamePanel(this));
+
     }
 
     public static Context getGameContext(){

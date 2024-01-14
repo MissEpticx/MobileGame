@@ -13,7 +13,9 @@ public enum Floor implements BitmapMethods {
     DIRT(R.drawable.dirt_tileset, 11, 7),
     GRASS(R.drawable.grass_tileset, 11, 7),
     HILL(R.drawable.grass_hill_tileset, 11, 7),
-    SLOPES(R.drawable.grass_hill_slopes_tileset, 6, 3);
+    SLOPES(R.drawable.grass_hill_slopes_tileset, 6, 3),
+    BUSHES(R.drawable.bush_tileset, 11, 11),
+    WATER(R.drawable.water_sprite_sheet, 5, 1);
 
     private Bitmap[] sprites;
     Floor(int resID, int tilesInWidth, int tilesInHeight){

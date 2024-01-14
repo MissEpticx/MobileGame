@@ -49,13 +49,10 @@ public class TouchEvents {
                 float c = (float) Math.hypot(a, b);
 
                 if(c <= radius){
-                    System.out.println("Inside!");
-
                     touchDown = true;
                     xTouch = x;
                     yTouch = y;
                 } else{
-                    System.out.println("Outside :(");
                     touchDown = false;
                 }
                 break;

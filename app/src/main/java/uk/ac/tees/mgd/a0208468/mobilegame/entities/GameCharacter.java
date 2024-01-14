@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.MainActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.R;
-import uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
 
 public enum GameCharacter implements BitmapMethods {
@@ -33,6 +32,4 @@ public enum GameCharacter implements BitmapMethods {
     public  Bitmap getSprite(int yPosition, int xPosition){
         return sprites[yPosition][xPosition];
     }
-
-
 }
