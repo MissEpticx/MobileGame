@@ -5,7 +5,7 @@ import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFA
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import uk.ac.tees.mgd.a0208468.mobilegame.MainActivity;
+import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.R;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
 

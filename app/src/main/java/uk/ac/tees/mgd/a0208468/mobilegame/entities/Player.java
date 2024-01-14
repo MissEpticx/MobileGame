@@ -1,7 +1,7 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.entities;
 
-import static uk.ac.tees.mgd.a0208468.mobilegame.MainActivity.GAME_HEIGHT;
-import static uk.ac.tees.mgd.a0208468.mobilegame.MainActivity.GAME_WIDTH;
+import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_HEIGHT;
+import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.CHAR_SPEED;
 
 import android.graphics.PointF;

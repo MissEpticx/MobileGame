@@ -1,10 +1,10 @@
-package uk.ac.tees.mgd.a0208468.mobilegame;
+package uk.ac.tees.mgd.a0208468.mobilegame.main;
 
 public class GameLoop implements Runnable{
     private Thread gameThread;
-    private GamePanel gamePanel;
-    public  GameLoop(GamePanel gamePanel){
-        this.gamePanel = gamePanel;
+    private Game game;
+    public  GameLoop(Game game){
+        this.game = game;
         gameThread = new Thread(this);
     }
     @Override
@@ -19,8 +19,8 @@ public class GameLoop implements Runnable{
             double timeSinceLastDelta = nowDelta - lastDelta;
             double delta = timeSinceLastDelta / nanoSec;
 
-            gamePanel.update(delta);
-            gamePanel.render();
+            game.update(delta);
+            game.render();
 
             lastDelta = nowDelta;
             fps++;
