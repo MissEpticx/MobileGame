@@ -14,10 +14,15 @@ public final class GameConstants {
     }
 
     public static final class Sprite{
-        public static final int DEFAULT_CHAR_SIZE = 48;
-        public static final int DEFAULT_TILE_SIZE = 16;
         public static final int SCALE_MULTIPLIER = 8;
+        public static final int DEFAULT_CHAR_SIZE = 48;
+        public static final int CHAR_SIZE = DEFAULT_CHAR_SIZE * SCALE_MULTIPLIER;
+        public static final int HITBOX_SIZE = 12 * SCALE_MULTIPLIER;
+        public static final int DEFAULT_TILE_SIZE = 16;
+        public static final int UI_SCALE_MULTIPLIER = 6;
         public static final int TILE_SIZE = DEFAULT_TILE_SIZE * SCALE_MULTIPLIER;
+        public static final int X_DRAW_OFFSET = 4 * SCALE_MULTIPLIER;
+        public static final int Y_DRAW_OFFSET = 6 * SCALE_MULTIPLIER;
     }
 
     public static final class Animation{}

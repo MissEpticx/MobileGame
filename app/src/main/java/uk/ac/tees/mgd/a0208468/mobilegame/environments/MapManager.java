@@ -3,6 +3,11 @@ package uk.ac.tees.mgd.a0208468.mobilegame.environments;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 
 import android.graphics.Canvas;
+import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.RectF;
+
+import uk.ac.tees.mgd.a0208468.mobilegame.main.Game;
 
 public class MapManager {
     private GameMap currentDirt;
@@ -11,9 +16,9 @@ public class MapManager {
     private GameMap currentBushes;
     private GameMap currentSlopes;
     private GameMap currentWater;
+    private GameMap currentWaterLedge;
     private float cameraX;
     private float cameraY;
-    private int waterX;
     public MapManager(){
         InitialiseMap();
     }
@@ -44,25 +49,48 @@ public class MapManager {
 
         int[][] waterSpriteIds = {
                 { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  4,  4,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  4,  4,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  4,  4,  4,  4,  4,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0}
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  0,  4,  4,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0},
+                { 0,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0},
+                { 0,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0},
+                { 0,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0},
+                { 0,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0}
+        };
+
+        int[][] waterLedgeSpriteIds = {
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  0,  0,  0,  0,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4},
+                { 4,  4,  0,  4,  4,  0,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  4},
+                { 4,  0,  0,  4,  4,  0,  0,  0,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4},
+                { 4,  0,  4,  4,  4,  4,  4,  0,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4},
+                { 4,  0,  4,  4,  4,  4,  4,  0,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4},
+                { 4,  0,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4},
+                { 4,  0,  4,  4,  4,  4,  4,  4,  0,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4},
+                { 4,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4}
         };
 
         int[][] dirtSpriteIds = {
@@ -157,19 +185,24 @@ public class MapManager {
                 {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12}
         };
 
-        currentWater = new GameMap(waterSpriteIds);
-        currentDirt = new GameMap(dirtSpriteIds);
-        currentGrass = new GameMap(grassSpriteIds);
-        currentHills = new GameMap(hillSpriteIds);
-        currentSlopes = new GameMap(slopeSpriteIds);
-        currentBushes = new GameMap(bushSpriteIds);
+        currentWater = new GameMap(waterSpriteIds, Floor.WATER);
+        currentWaterLedge = new GameMap(waterLedgeSpriteIds, Floor.WATER);
+        currentDirt = new GameMap(dirtSpriteIds, Floor.DIRT);
+        currentGrass = new GameMap(grassSpriteIds, Floor.GRASS);
+        currentHills = new GameMap(hillSpriteIds, Floor.HILL);
+        currentSlopes = new GameMap(slopeSpriteIds, Floor.SLOPES);
+        currentBushes = new GameMap(bushSpriteIds, Floor.BUSHES);
     }
 
     public void drawWater(Canvas canvas, int waterAnimX){
-//        System.out.println("WaterIndex: " + waterAnimX);
         for (int j = 0; j < currentWater.getArrayHeight(); j++) {
             for (int i = 0; i < currentWater.getArrayWidth(); i++) {
                 canvas.drawBitmap(Floor.WATER.getSprite(currentWater.getAnimSpriteId(i, j, waterAnimX)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
+            }
+        }
+        for (int j = 0; j < currentWaterLedge.getArrayHeight(); j++) {
+            for (int i = 0; i < currentWaterLedge.getArrayWidth(); i++) {
+                canvas.drawBitmap(Floor.WATER.getSprite(currentWaterLedge.getAnimSpriteId(i, j, waterAnimX)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
             }
         }
     }
@@ -211,31 +244,85 @@ public class MapManager {
         this.cameraY = cameraY;
     }
 
-    public boolean canWalkHere(float x, float y){
-        if(x < 0 || y < 0){
+    public boolean canWalkHere(RectF hitbox, float deltaX, float deltaY){
+        if (hitbox.left + deltaX < 0 || hitbox.top + deltaY < 0
+                || hitbox.right + deltaX > getMapMaxWidth()
+                || hitbox.bottom + deltaY > getMapMaxHeight()){
             return false;
         }
 
-        if(x > getMapMaxWidth() || y > getMapMaxHeight()){
-            return false;
-        }
+        Point[] tileCoords = GetTileCoords(hitbox, deltaX, deltaY);
+        int[] tileIds = GetTileIds(tileCoords);
 
-        int tileX = (int) x / TILE_SIZE;
-        int tileY = (int) y / TILE_SIZE;
-        int dirtTileIndexVal = currentDirt.getSpriteId(tileX, tileY);
-        if(dirtTileIndexVal == 3 || dirtTileIndexVal == 8 || dirtTileIndexVal == 10
-                || dirtTileIndexVal == 33 || dirtTileIndexVal == 34  || dirtTileIndexVal == 35){
-            return false;
-        }
-        int hillTileIndexVal = currentHills.getSpriteId(tileX, tileY);
-        if(hillTileIndexVal == 0 || hillTileIndexVal == 1 || hillTileIndexVal == 2
-                || hillTileIndexVal == 11 || hillTileIndexVal == 13 || hillTileIndexVal == 22
-                || hillTileIndexVal == 23 || hillTileIndexVal == 24){
-            return false;
-        }
+        return IsTilesWalkable(tileIds);
+    }
 
+    private static Point[] GetTileCoords(RectF hitbox, float deltaX, float deltaY){
+        Point[] tileCoords = new Point[4];
+
+        int left = (int) ((hitbox.left + deltaX) / TILE_SIZE);
+        int right = (int) ((hitbox.right + deltaX) / TILE_SIZE);
+        int top = (int) ((hitbox.top + deltaY) / TILE_SIZE);
+        int bottom = (int) ((hitbox.bottom + deltaY) / TILE_SIZE);
+
+        tileCoords[0] = new Point(left, top);
+        tileCoords[1] = new Point(right, top);
+        tileCoords[2] = new Point(left, bottom);
+        tileCoords[3] = new Point(right, bottom);
+
+        return tileCoords;
+    }
+
+    private int[] GetTileIds(Point[] tileCoords){
+        int[] tileIds = new int[4];
+
+        for (int i = 0; i < tileCoords.length; i++) {
+            tileIds[i] = currentWater.getSpriteId(tileCoords[i].x, tileCoords[i].y);
+        }
+        return tileIds;
+    }
+
+    public static boolean IsTilesWalkable(int[] tileIds){
+        for(int i : tileIds){
+            if(!IsTileWalkable(i)){
+                return false;
+            }
+        }
         return true;
     }
+
+    public static boolean IsTileWalkable(int tileID){
+        if(tileID != 4){
+            return false;
+        }
+        return true;
+    }
+
+//    public boolean canWalkHere(float x, float y){
+//        if(x < 0 || y < 0){
+//            return false;
+//        }
+//
+//        if(x > getMapMaxWidth() || y > getMapMaxHeight()){
+//            return false;
+//        }
+//
+//        int tileX = (int) x / TILE_SIZE;
+//        int tileY = (int) y / TILE_SIZE;
+//        int dirtTileIndexVal = currentDirt.getSpriteId(tileX, tileY);
+//        if(dirtTileIndexVal == 3 || dirtTileIndexVal == 8 || dirtTileIndexVal == 10
+//                || dirtTileIndexVal == 33 || dirtTileIndexVal == 34  || dirtTileIndexVal == 35){
+//            return false;
+//        }
+//        int hillTileIndexVal = currentHills.getSpriteId(tileX, tileY);
+//        if(hillTileIndexVal == 0 || hillTileIndexVal == 1 || hillTileIndexVal == 2
+//                || hillTileIndexVal == 11 || hillTileIndexVal == 13 || hillTileIndexVal == 22
+//                || hillTileIndexVal == 23 || hillTileIndexVal == 24){
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
     public int getMapMaxWidth(){
         return currentDirt.getArrayWidth() * TILE_SIZE;

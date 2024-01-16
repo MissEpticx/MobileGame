@@ -6,9 +6,11 @@ import android.graphics.Canvas;
 
 public class GameMap {
     private int[][] spriteIds;
+    private Floor floorType;
 
-    public GameMap(int[][] spriteIds){
+    public GameMap(int[][] spriteIds, Floor floorType){
         this.spriteIds = spriteIds;
+        this.floorType = floorType;
     }
 
     public int getSpriteId(int xIndex, int yIndex){
@@ -22,6 +24,9 @@ public class GameMap {
         return spriteIds[yIndex][xIndex];
     }
 
+    public Floor GetFloorType(){
+        return floorType;
+    }
 
     public int getArrayWidth(){
         return spriteIds[0].length;

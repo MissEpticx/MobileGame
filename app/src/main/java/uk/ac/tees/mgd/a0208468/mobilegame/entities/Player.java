@@ -1,5 +1,6 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.entities;
 
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_CHAR_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_HEIGHT;
 import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.CHAR_SPEED;
@@ -10,7 +11,7 @@ import uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants;
 
 public class Player extends Character{
     public Player(){
-        super(new PointF(GAME_WIDTH/2, GAME_HEIGHT/2), GameCharacter.PLAYER);
+        super(new PointF(GAME_WIDTH/2 - DEFAULT_CHAR_SIZE/2, GAME_HEIGHT/2 + DEFAULT_CHAR_SIZE/2), GameCharacter.PLAYER);
     }
 
     public void update(double delta, boolean movePlayer){

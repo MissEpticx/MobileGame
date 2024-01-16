@@ -2,6 +2,9 @@ package uk.ac.tees.mgd.a0208468.mobilegame.gamestates;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_CHAR_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.X_DRAW_OFFSET;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.Y_DRAW_OFFSET;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.PLAYING_HOME;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,6 +18,8 @@ import uk.ac.tees.mgd.a0208468.mobilegame.entities.Player;
 import uk.ac.tees.mgd.a0208468.mobilegame.environments.MapManager;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.Game;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
+import uk.ac.tees.mgd.a0208468.mobilegame.ui.CustomButton;
+import uk.ac.tees.mgd.a0208468.mobilegame.ui.PlayingUI;
 
 public class Playing extends BaseState implements GameStateInterface {
     //Game
@@ -27,22 +32,16 @@ public class Playing extends BaseState implements GameStateInterface {
     private float cameraX, cameraY;
     private PointF lastTouchDiff;
     private Paint paint = new Paint();
-
-    //UI
-    private Paint circlePaint;
-    private float xCentre = (MainActivity.GAME_WIDTH / 12) * 10, yCentre = (MainActivity.GAME_HEIGHT / 8) * 6, radius = 100;
-    private float xTouch, yTouch;
-    private boolean touchDown;
+    private PlayingUI playingUI;
 
     public Playing(Game game){
         super(game);
         mapManager = new MapManager();
         player = new Player();
         paint.setColor(Color.BLUE);
-        circlePaint = new Paint();
-        circlePaint.setStyle(Paint.Style.STROKE);
-        circlePaint.setStrokeWidth(6);
-        circlePaint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+        playingUI = new PlayingUI(this);
     }
     @Override
     public void update(double delta) {
@@ -56,56 +55,23 @@ public class Playing extends BaseState implements GameStateInterface {
     public void render(Canvas canvas) {
         mapManager.drawWater(canvas, waterAnimX);
         mapManager.draw(canvas);
-        drawUI(canvas);
+
         drawPlayer(canvas);
+        playingUI.draw(canvas);
     }
 
     @Override
     public void touchEvents(MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN :
-                //  Using Trigonometry to determine if touch down is within the joystick circle or not.
-                float x = event.getX();
-                float y = event.getY();
-
-                float a = Math.abs(x - xCentre);
-                float b = Math.abs(y - yCentre);
-                float c = (float) Math.hypot(a, b);
-
-                if(c <= radius){
-                    touchDown = true;
-                    xTouch = x;
-                    yTouch = y;
-                } else{
-                    touchDown = false;
-                    game.setCurrentGameState(Game.GameState.MENU);
-                }
-                break;
-            case MotionEvent.ACTION_MOVE :
-                if(touchDown){
-                    xTouch = event.getX();
-                    yTouch = event.getY();
-                    float xDiff = xTouch - xCentre;
-                    float yDiff = yTouch - yCentre;
-                    setPlayerMoveTrue(new PointF(xDiff, yDiff));
-                }
-                break;
-            case MotionEvent.ACTION_UP :
-                touchDown = false;
-                setPlayerMoveFalse();
-                break;
-        }
+        playingUI.touchEvents(event);
     }
 
     private void drawPlayer(Canvas canvas){
         canvas.drawBitmap(player.getGameCharType().getSprite(player.getFaceDir(), player.getAniIndex()),
-                player.getHitbox().left - (TILE_SIZE + DEFAULT_CHAR_SIZE),
-                player.getHitbox().top - (TILE_SIZE + DEFAULT_CHAR_SIZE),
+                player.getHitbox().left - (TILE_SIZE + DEFAULT_CHAR_SIZE/2 - X_DRAW_OFFSET),
+                player.getHitbox().top - (TILE_SIZE + DEFAULT_CHAR_SIZE/2 + Y_DRAW_OFFSET),
                 null);
-    }
 
-    private void drawUI(Canvas canvas){
-        canvas.drawCircle(xCentre, yCentre, radius, circlePaint);
+        canvas.drawRect(player.getHitbox(), paint);
     }
 
     public void updatePlayerMove(double delta){
@@ -140,23 +106,34 @@ public class Playing extends BaseState implements GameStateInterface {
             ySpeed *= -1;
         }
 
-        int pWidth = TILE_SIZE;
-        int pHeight = TILE_SIZE;
-
-        if(xSpeed <= 0){
-            pWidth = 0;
-        }
-        if(ySpeed <= 0){
-            pHeight = 0;
-        }
+//        int pWidth = TILE_SIZE;
+//        int pHeight = TILE_SIZE;
+//
+//        if(xSpeed <= 0){
+//            pWidth = 0;
+//        }
+//        if(ySpeed <= 0){
+//            pHeight = 0;
+//        }
 
         float deltaX = xSpeed * baseSpeed * -1;
         float deltaY = ySpeed * baseSpeed * -1;
 
-        if(mapManager.canWalkHere(player.getHitbox().left + (cameraX * -1) + (deltaX * -1) + pWidth, player.getHitbox().top + (cameraY * -1) + (deltaY * -1) + pHeight)){
+        float cameraDeltaX = cameraX * -1 + deltaX * -1;
+        float cameraDeltaY = cameraY * -1 + deltaY * -1;
+
+        if(mapManager.canWalkHere(player.getHitbox(), cameraDeltaX, cameraDeltaY)){
             cameraX += deltaX;
             cameraY += deltaY;
         }
+//        if(mapManager.canWalkHere(player.getHitbox().left + (cameraX * -1) + (deltaX * -1) + pWidth, player.getHitbox().top + (cameraY * -1) + (deltaY * -1) + pHeight)){
+//            cameraX += deltaX;
+//            cameraY += deltaY;
+//        }
+    }
+
+    public void setGameStateToMenu(){
+        game.setCurrentGameState(Game.GameState.MENU);
     }
 
     public  void setPlayerMoveTrue(PointF lastTouchDiff){

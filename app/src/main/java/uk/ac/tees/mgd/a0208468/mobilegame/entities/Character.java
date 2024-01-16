@@ -2,6 +2,9 @@ package uk.ac.tees.mgd.a0208468.mobilegame.entities;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.AMOUNT;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.CHAR_SPEED;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.CHAR_SIZE;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_CHAR_SIZE;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.HITBOX_SIZE;
 
 import android.graphics.PointF;
 
@@ -12,7 +15,7 @@ public abstract class Character extends Entity{
     protected int faceDir = GameConstants.FaceDir.IDLE_DOWN;
     protected final GameCharacter gameCharType;
     public Character(PointF pos, GameCharacter gameCharType){
-        super(pos, 1, 1);
+        super(pos, HITBOX_SIZE, HITBOX_SIZE);
         this.gameCharType = gameCharType;
     }
 

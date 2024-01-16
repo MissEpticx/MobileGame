@@ -42,6 +42,8 @@ public class Game {
             case PLAYING:
                 playing.update(delta);
                 break;
+            case CLOSE:
+                System.exit(0);
         }
     }
 
@@ -49,7 +51,6 @@ public class Game {
         Canvas canvas = holder.lockCanvas();
         canvas.drawColor(Color.BLACK);
 
-        //Draw the Game
         switch (currentGameState){
             case MENU:
                 menu.render(canvas);
@@ -73,7 +74,8 @@ public class Game {
 
     public enum GameState{
         MENU,
-        PLAYING;
+        PLAYING,
+        CLOSE;
     }
 
     public GameState getCurrentGameState(){
