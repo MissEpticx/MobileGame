@@ -106,16 +106,6 @@ public class Playing extends BaseState implements GameStateInterface {
             ySpeed *= -1;
         }
 
-//        int pWidth = TILE_SIZE;
-//        int pHeight = TILE_SIZE;
-//
-//        if(xSpeed <= 0){
-//            pWidth = 0;
-//        }
-//        if(ySpeed <= 0){
-//            pHeight = 0;
-//        }
-
         float deltaX = xSpeed * baseSpeed * -1;
         float deltaY = ySpeed * baseSpeed * -1;
 
@@ -126,10 +116,6 @@ public class Playing extends BaseState implements GameStateInterface {
             cameraX += deltaX;
             cameraY += deltaY;
         }
-//        if(mapManager.canWalkHere(player.getHitbox().left + (cameraX * -1) + (deltaX * -1) + pWidth, player.getHitbox().top + (cameraY * -1) + (deltaY * -1) + pHeight)){
-//            cameraX += deltaX;
-//            cameraY += deltaY;
-//        }
     }
 
     public void setGameStateToMenu(){

@@ -252,9 +252,16 @@ public class MapManager {
         }
 
         Point[] tileCoords = GetTileCoords(hitbox, deltaX, deltaY);
-        int[] tileIds = GetTileIds(tileCoords);
+        int[] waterTileIds = GetTileIds(tileCoords, 0);
+        int[] hillTileIds = GetTileIds(tileCoords, 1);
 
-        return IsTilesWalkable(tileIds);
+        if(!IsTilesWalkable(waterTileIds, 0)){
+            return false;
+        }
+        if(!IsTilesWalkable(hillTileIds, 1)){
+            return false;
+        }
+        return true;
     }
 
     private static Point[] GetTileCoords(RectF hitbox, float deltaX, float deltaY){
@@ -273,28 +280,41 @@ public class MapManager {
         return tileCoords;
     }
 
-    private int[] GetTileIds(Point[] tileCoords){
+    private int[] GetTileIds(Point[] tileCoords, int tileType){
         int[] tileIds = new int[4];
 
         for (int i = 0; i < tileCoords.length; i++) {
-            tileIds[i] = currentWater.getSpriteId(tileCoords[i].x, tileCoords[i].y);
+            if(tileType == 0){
+                tileIds[i] = currentWater.getSpriteId(tileCoords[i].x, tileCoords[i].y);
+            } else{
+                tileIds[i] = currentHills.getSpriteId(tileCoords[i].x, tileCoords[i].y);
+            }
         }
         return tileIds;
     }
 
-    public static boolean IsTilesWalkable(int[] tileIds){
+    public static boolean IsTilesWalkable(int[] tileIds, int tileType){
         for(int i : tileIds){
-            if(!IsTileWalkable(i)){
+            if(!IsTileWalkable(i, tileType)){
                 return false;
             }
         }
         return true;
     }
 
-    public static boolean IsTileWalkable(int tileID){
-        if(tileID != 4){
-            return false;
+    public static boolean IsTileWalkable(int tileID, int tileType){
+        if(tileType == 0){
+            if(tileID != 4){
+                return false;
+            }
+        } else{
+            if(tileID == 0 || tileID == 1 || tileID == 2
+                || tileID == 11 || tileID == 13 || tileID == 22
+                || tileID == 23 || tileID == 24){
+                return false;
+            }
         }
+
         return true;
     }
 

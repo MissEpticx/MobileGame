@@ -21,8 +21,8 @@ public final class GameConstants {
         public static final int DEFAULT_TILE_SIZE = 16;
         public static final int UI_SCALE_MULTIPLIER = 6;
         public static final int TILE_SIZE = DEFAULT_TILE_SIZE * SCALE_MULTIPLIER;
-        public static final int X_DRAW_OFFSET = 4 * SCALE_MULTIPLIER;
-        public static final int Y_DRAW_OFFSET = 6 * SCALE_MULTIPLIER;
+        public static final int X_DRAW_OFFSET = 1 * SCALE_MULTIPLIER;
+        public static final int Y_DRAW_OFFSET = 1 * SCALE_MULTIPLIER;
     }
 
     public static final class Animation{}
