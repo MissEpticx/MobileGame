@@ -27,7 +27,7 @@ public class PlayingUI {
         circlePaint.setStrokeWidth(6);
         circlePaint.setColor(Color.RED);
 
-        buttonHome = new CustomButton(10, 10, PLAYING_HOME.getWidth(), PLAYING_HOME.getHeight());
+        buttonHome = new CustomButton(50, 50, PLAYING_HOME.getWidth(), PLAYING_HOME.getHeight());
     }
 
     public void draw(Canvas canvas){

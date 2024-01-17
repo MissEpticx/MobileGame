@@ -1,27 +1,20 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.gamestates;
 
-//import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.INIT_TIME;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_CHAR_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.X_DRAW_OFFSET;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.Y_DRAW_OFFSET;
-import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_HEIGHT;
-import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
-import android.hardware.SensorEvent;
 import android.view.MotionEvent;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.GameStateInterface;
-//import uk.ac.tees.mgd.a0208468.mobilegame.accelerometer.OrientationData;
 import uk.ac.tees.mgd.a0208468.mobilegame.entities.Player;
 import uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.InteractablesManager;
-import uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plant;
 import uk.ac.tees.mgd.a0208468.mobilegame.environments.MapManager;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.Game;
 import uk.ac.tees.mgd.a0208468.mobilegame.ui.PlayingUI;
@@ -38,8 +31,6 @@ public class Playing extends BaseState implements GameStateInterface {
     private PointF lastTouchDiff;
     private Paint paint = new Paint();
     private PlayingUI playingUI;
-//    private OrientationData orientData;
-//    private long frameTime;
 
     public Playing(Game game){
         super(game);
@@ -55,8 +46,6 @@ public class Playing extends BaseState implements GameStateInterface {
     @Override
     public void update(double delta) {
         updatePlayerMove(delta);
-
-
         player.update(delta, movePlayer);
         mapManager.setCameraValues(cameraX, cameraY);
         interactManager.setCameraValues(cameraX, cameraY);

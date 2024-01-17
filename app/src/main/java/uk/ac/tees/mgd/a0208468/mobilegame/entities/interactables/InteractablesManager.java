@@ -62,52 +62,58 @@ public class InteractablesManager {
     }
 
     public boolean canPlant(float touchX, float touchY){
-        if(plants != null){
-            GameMap map = mapManager.getCurrentMap();
+        GameMap map = mapManager.getCurrentMap();
 
-            Point[] tileCoords = GetTileCoords(touchX, touchY, cameraX, cameraY);
-            int[] dirtTileIds = GetTileIds(map, tileCoords, 0);
-            int[] grassTileIds = GetTileIds(map, tileCoords, 1);
+        Point tileInGrid = GetTileInGrid(map, touchX, touchY, cameraX, cameraY);
 
-            for (int i : dirtTileIds){
-                if (i == 12){
-                    for (int j : grassTileIds){
-                        if(j == 10){
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        } else {
+        int dirtId = map.getMapLayer("Dirt").getSpriteId(tileInGrid.x, tileInGrid.y);
+        int grassId = map.getMapLayer("Grass").getSpriteId(tileInGrid.x, tileInGrid.y);
+
+        if(dirtId == 12 && grassId == 10){
             return true;
         }
+        return false;
+
+//        System.out.println("Tile Co-ords 0: " + tileCoords[0].x + ", " + tileCoords[0].y);
+//        System.out.println("Tile Co-ords 1: " + tileCoords[1].x + ", " + tileCoords[1].y);
+//        System.out.println("Tile Co-ords 2: " + tileCoords[2].x + ", " + tileCoords[2].y);
+//        System.out.println("Tile Co-ords 3: " + tileCoords[3].x + ", " + tileCoords[3].y);
+//        int[] dirtTileIds = GetTileIds(map, tileCoords, 0);
+//        int[] grassTileIds = GetTileIds(map, tileCoords, 1);
+
+//        for (int i : dirtTileIds){
+//            if (i == 12){
+//                for (int j : grassTileIds){
+//                    if(j == 10){
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
+//        return false;
     }
 
-    private static Point[] GetTileCoords(float touchX, float touchY, float deltaX, float deltaY){
-        Point[] tileCoords = new Point[4];
-
-        int left = (int) ((touchX - deltaX) / TILE_SIZE);
-        int right = (int) ((touchX + deltaX) / TILE_SIZE);
-        int top = (int) ((touchY - deltaY) / TILE_SIZE);
-        int bottom = (int) ((touchY + deltaY) / TILE_SIZE);
-
-        tileCoords[0] = new Point(left, top);
-        tileCoords[1] = new Point(right, top);
-        tileCoords[2] = new Point(left, bottom);
-        tileCoords[3] = new Point(right, bottom);
-
-        return tileCoords;
+    private static Point GetTileInGrid(GameMap map, float touchX, float touchY, float deltaX, float deltaY){
+        int y = (int) ((touchX - deltaX) / TILE_SIZE);
+        int x = (int) ((touchY - deltaY) / TILE_SIZE);
+        return new  Point(x, y);
+//        System.out.println("x: " + x + " || y: " + y);
+//        MapLayer dirtLayer = map.getMapLayer("Dirt");
+//        System.out.println("Sprite Id: " + dirtLayer.getSpriteId(x, y));
+//        return dirtLayer.getSpriteId(x, y);
     }
 
     private int[] GetTileIds(GameMap map, Point[] tileCoords, int tileType){
         int[] tileIds = new int[4];
         for (int i = 0; i < tileCoords.length; i++) {
-            if(tileType == 0){
-                tileIds[i] = map.getSpriteId(map.getMapLayer("Dirt"), tileCoords[i].x, tileCoords[i].y);
-            } else{
-                tileIds[i] = map.getSpriteId(map.getMapLayer("Grass"), tileCoords[i].x, tileCoords[i].y);
+            if(tileCoords[i].x > 0 && tileCoords[i].y > 0){
+                if(tileType == 0){
+                    tileIds[i] = map.getSpriteId(map.getMapLayer("Dirt"), tileCoords[i].x, tileCoords[i].y);
+                } else {
+                    tileIds[i] = map.getSpriteId(map.getMapLayer("Grass"), tileCoords[i].x, tileCoords[i].y);
+                }
             }
+            System.out.println(tileIds[i]);
         }
         return tileIds;
     }

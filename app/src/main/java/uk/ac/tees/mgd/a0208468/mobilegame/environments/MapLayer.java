@@ -23,4 +23,8 @@ public class MapLayer {
     public int[][] getSpriteIds() {
         return spriteIds;
     }
+
+    public int getSpriteId(int x, int y){
+        return spriteIds[x][y];
+    }
 }

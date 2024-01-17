@@ -1,6 +1,7 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.gamestates;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.UI_SCALE_MULTIPLIER;
+import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.MENU_CLOSE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.MENU_PLAY;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.MAIN_MENU_BOARD;
@@ -18,7 +19,7 @@ import uk.ac.tees.mgd.a0208468.mobilegame.ui.CustomButton;
 public class Menu extends BaseState implements GameStateInterface {
     private CustomButton buttonPlay;
     private CustomButton buttonClose;
-    private int menuX = 200;
+    private int menuX = 400;
     private int menuY = 50;
     private int buttonPlayX = menuX + ((MAIN_MENU_BOARD.getImage().getWidth() / 2) - (MENU_PLAY.getWidth() * (UI_SCALE_MULTIPLIER / 2)));
     private int buttonPlayY = menuY + 350;

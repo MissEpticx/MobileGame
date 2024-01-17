@@ -42,11 +42,14 @@ public class MapManager {
             for (int i = 0; i < currentMap.getArrayHeight(key); i++) {
                 for (int j = 0; j < currentMap.getArrayWidth(key); j++) {
                     MapLayer layer = currentMap.getMapLayer(key);
-                    if(key.contains("Water")){
-                        Bitmap draw = layer.getFloorType().getSprite(currentMap.getAnimSpriteId(layer, j, i, waterAnimX));
-                        canvas.drawBitmap(draw, (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
-                    } else{
-                        canvas.drawBitmap(layer.getFloorType().getSprite(currentMap.getSpriteId(layer, j, i)), (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
+                    if(j > 0 && i > 0){
+                        if(key.contains("Water")){
+
+                            Bitmap draw = layer.getFloorType().getSprite(currentMap.getAnimSpriteId(layer, j, i, waterAnimX));
+                            canvas.drawBitmap(draw, (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
+                        } else{
+                            canvas.drawBitmap(layer.getFloorType().getSprite(currentMap.getSpriteId(layer, j, i)), (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
+                        }
                     }
                 }
             }
@@ -86,7 +89,6 @@ public class MapManager {
             return false;
         }
         for (Decoration deco : currentMap.getDecorationArrayList()){
-//            System.out.println("Searching Collision with " + deco.getDecorationType());
             if(deco.hitPlayer(playerHitbox, deltaX, deltaY)){
                 System.out.println("Collision detected");
                 return false;
