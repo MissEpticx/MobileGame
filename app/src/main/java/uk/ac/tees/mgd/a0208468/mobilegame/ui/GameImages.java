@@ -10,10 +10,9 @@ import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 public enum GameImages implements BitmapMethods {
     MAIN_MENU_BOARD(R.drawable.mainmenu_board);
     private final Bitmap image;
-    GameImages(int redID){
+    GameImages(int resID){
         options.inScaled = false;
-        image = getScaledBitmapUI(BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), redID, options), 8);
-
+        image = getScaledBitmapUI(BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options), 8);
     }
 
     public Bitmap getImage(){

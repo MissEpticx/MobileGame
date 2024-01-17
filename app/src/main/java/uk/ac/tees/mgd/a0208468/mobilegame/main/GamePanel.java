@@ -19,13 +19,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-//        return touchEvents.touchEvent(event);
         return game.touchEvent(event);
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
+
         game.startGameLoop();
     }
 

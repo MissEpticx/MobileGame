@@ -8,6 +8,7 @@ import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.MAIN_MENU_BOARD;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.hardware.SensorEvent;
 import android.view.MotionEvent;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.GameStateInterface;

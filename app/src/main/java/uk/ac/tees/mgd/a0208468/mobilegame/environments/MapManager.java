@@ -1,29 +1,161 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.environments;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
+import static uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations.BOULDER;
+import static uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations.HOUSE;
+import static uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations.PEBBLE;
+import static uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations.SUNFLOWER;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
-import uk.ac.tees.mgd.a0208468.mobilegame.main.Game;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decoration;
+import uk.ac.tees.mgd.a0208468.mobilegame.gamestates.Playing;
 
 public class MapManager {
-    private GameMap currentDirt;
-    private GameMap currentGrass;
-    private GameMap currentHills;
-    private GameMap currentBushes;
-    private GameMap currentSlopes;
-    private GameMap currentWater;
-    private GameMap currentWaterLedge;
-    private float cameraX;
-    private float cameraY;
-    public MapManager(){
+    private GameMap currentMap;
+    private float cameraX, cameraY;
+    private Playing playing;
+    private Paint paint = new Paint();
+    public MapManager(Playing playing){
+        this.playing = playing;
         InitialiseMap();
+        paint.setColor(Color.BLUE);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+    }
+
+    public GameMap getCurrentMap(){
+        return currentMap;
+    }
+    public void drawTiles(Canvas canvas, int waterAnimX){
+        for(String key : currentMap.getKeys()){
+            for (int i = 0; i < currentMap.getArrayHeight(key); i++) {
+                for (int j = 0; j < currentMap.getArrayWidth(key); j++) {
+                    MapLayer layer = currentMap.getMapLayer(key);
+                    if(key.contains("Water")){
+                        Bitmap draw = layer.getFloorType().getSprite(currentMap.getAnimSpriteId(layer, j, i, waterAnimX));
+                        canvas.drawBitmap(draw, (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
+                    } else{
+                        canvas.drawBitmap(layer.getFloorType().getSprite(currentMap.getSpriteId(layer, j, i)), (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
+                    }
+                }
+            }
+        }
+    }
+
+    public void drawDecorations(Canvas canvas){
+        if(currentMap.getDecorationArrayList() != null){
+            for(Decoration deco : currentMap.getDecorationArrayList()){
+                RectF hitbox = deco.getHitbox();
+                canvas.drawBitmap(deco.getDecorationType().getImage(), hitbox.left + cameraX, hitbox.top + cameraY, null);
+
+//                canvas.drawRect(hitbox.left + cameraX, hitbox.top + cameraY, hitbox.right + cameraX, hitbox.bottom + cameraY, paint);
+            }
+        }
+    }
+
+    public void draw(Canvas canvas, int waterAnimX){
+        drawTiles(canvas, waterAnimX);
+        drawDecorations(canvas);
+    }
+
+    public void setCameraValues(float cameraX, float cameraY){
+        this.cameraX = cameraX;
+        this.cameraY = cameraY;
+    }
+
+    public boolean canWalkHere(RectF playerHitbox, float deltaX, float deltaY){
+        Point[] tileCoords = GetTileCoords(playerHitbox, deltaX, deltaY);
+        int[] waterTileIds = GetTileIds(tileCoords, 0);
+        int[] hillTileIds = GetTileIds(tileCoords, 1);
+
+        if(!IsTilesWalkable(waterTileIds, 0)){
+            return false;
+        }
+        if(!IsTilesWalkable(hillTileIds, 1)){
+            return false;
+        }
+        for (Decoration deco : currentMap.getDecorationArrayList()){
+//            System.out.println("Searching Collision with " + deco.getDecorationType());
+            if(deco.hitPlayer(playerHitbox, deltaX, deltaY)){
+                System.out.println("Collision detected");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static Point[] GetTileCoords(RectF hitbox, float deltaX, float deltaY){
+        Point[] tileCoords = new Point[4];
+
+        int left = (int) ((hitbox.left + deltaX) / TILE_SIZE);
+        int right = (int) ((hitbox.right + deltaX) / TILE_SIZE);
+        int top = (int) ((hitbox.top + deltaY) / TILE_SIZE);
+        int bottom = (int) ((hitbox.bottom + deltaY) / TILE_SIZE);
+
+        tileCoords[0] = new Point(left, top);
+        tileCoords[1] = new Point(right, top);
+        tileCoords[2] = new Point(left, bottom);
+        tileCoords[3] = new Point(right, bottom);
+
+        return tileCoords;
+    }
+
+    private int[] GetTileIds(Point[] tileCoords, int tileType){
+        int[] tileIds = new int[4];
+        for (int i = 0; i < tileCoords.length; i++) {
+            if(tileType == 0){
+                tileIds[i] = currentMap.getSpriteId(currentMap.getMapLayer("Water"), tileCoords[i].x, tileCoords[i].y);
+            } else{
+                tileIds[i] = currentMap.getSpriteId(currentMap.getMapLayer("Hills"), tileCoords[i].x, tileCoords[i].y);
+            }
+        }
+        return tileIds;
+    }
+
+    public static boolean IsTilesWalkable(int[] tileIds, int tileType){
+        for(int i : tileIds){
+            if(!IsTileWalkable(i, tileType)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean IsTileWalkable(int tileID, int tileType){
+        if(tileType == 0){
+            if(tileID != 4){
+                return false;
+            }
+        } else{
+            if(tileID == 0 || tileID == 1 || tileID == 2
+                || tileID == 11 || tileID == 13 || tileID == 22
+                || tileID == 23 || tileID == 24){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void InitialiseMap(){
+        ArrayList<Decoration> decorationArrayList;
+
+        decorationArrayList = new ArrayList<>();
+        decorationArrayList.add(new Decoration(new PointF(3375, 400), HOUSE));
+        decorationArrayList.add(new Decoration(new PointF(1000, 800), PEBBLE));
+        decorationArrayList.add(new Decoration(new PointF(2000, 1500), BOULDER));
+        decorationArrayList.add(new Decoration(new PointF(4100, 1000), SUNFLOWER));
+
         int[][] bushSpriteIds = {
                 { 0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2},
                 {11, 16, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 17, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 13},
@@ -185,170 +317,23 @@ public class MapManager {
                 {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12}
         };
 
-        currentWater = new GameMap(waterSpriteIds, Floor.WATER);
-        currentWaterLedge = new GameMap(waterLedgeSpriteIds, Floor.WATER);
-        currentDirt = new GameMap(dirtSpriteIds, Floor.DIRT);
-        currentGrass = new GameMap(grassSpriteIds, Floor.GRASS);
-        currentHills = new GameMap(hillSpriteIds, Floor.HILL);
-        currentSlopes = new GameMap(slopeSpriteIds, Floor.SLOPES);
-        currentBushes = new GameMap(bushSpriteIds, Floor.BUSHES);
-    }
+        MapLayer water = new MapLayer(waterSpriteIds, Floor.WATER);
+        MapLayer waterEdges = new MapLayer(waterLedgeSpriteIds, Floor.WATER);
+        MapLayer dirt = new MapLayer(dirtSpriteIds, Floor.DIRT);
+        MapLayer grass = new MapLayer(grassSpriteIds, Floor.GRASS);
+        MapLayer hills = new MapLayer(hillSpriteIds, Floor.HILL);
+        MapLayer slope = new MapLayer(slopeSpriteIds, Floor.SLOPES);
+        MapLayer bushes = new MapLayer(bushSpriteIds, Floor.BUSHES);
 
-    public void drawWater(Canvas canvas, int waterAnimX){
-        for (int j = 0; j < currentWater.getArrayHeight(); j++) {
-            for (int i = 0; i < currentWater.getArrayWidth(); i++) {
-                canvas.drawBitmap(Floor.WATER.getSprite(currentWater.getAnimSpriteId(i, j, waterAnimX)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
-            }
-        }
-        for (int j = 0; j < currentWaterLedge.getArrayHeight(); j++) {
-            for (int i = 0; i < currentWaterLedge.getArrayWidth(); i++) {
-                canvas.drawBitmap(Floor.WATER.getSprite(currentWaterLedge.getAnimSpriteId(i, j, waterAnimX)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
-            }
-        }
-    }
+        Map<String, MapLayer> mapLayers = new LinkedHashMap<>();
+        mapLayers.put("Water", water);
+        mapLayers.put("WaterEdge", waterEdges);
+        mapLayers.put("Dirt", dirt);
+        mapLayers.put("Grass", grass);
+        mapLayers.put("Hills", hills);
+        mapLayers.put("Slope", slope);
+        mapLayers.put("Bushes", bushes);
 
-    public void draw(Canvas canvas){
-        for (int j = 0; j < currentDirt.getArrayHeight(); j++) {
-            for (int i = 0; i < currentDirt.getArrayWidth(); i++) {
-                canvas.drawBitmap(Floor.DIRT.getSprite(currentDirt.getSpriteId(i, j)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
-            }
-        }
-
-        for (int j = 0; j < currentGrass.getArrayHeight(); j++) {
-            for (int i = 0; i < currentGrass.getArrayWidth(); i++) {
-                canvas.drawBitmap(Floor.GRASS.getSprite(currentGrass.getSpriteId(i, j)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
-            }
-        }
-
-        for (int j = 0; j < currentHills.getArrayHeight(); j++) {
-            for (int i = 0; i < currentHills.getArrayWidth(); i++) {
-                canvas.drawBitmap(Floor.HILL.getSprite(currentHills.getSpriteId(i, j)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
-            }
-        }
-
-        for (int j = 0; j < currentSlopes.getArrayHeight(); j++) {
-            for (int i = 0; i < currentSlopes.getArrayWidth(); i++) {
-                canvas.drawBitmap(Floor.SLOPES.getSprite(currentSlopes.getSpriteId(i, j)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
-            }
-        }
-
-        for (int j = 0; j < currentBushes.getArrayHeight(); j++) {
-            for (int i = 0; i < currentBushes.getArrayWidth(); i++) {
-                canvas.drawBitmap(Floor.BUSHES.getSprite(currentBushes.getSpriteId(i, j)), (i * TILE_SIZE) + cameraX, (j * TILE_SIZE) + cameraY, null);
-            }
-        }
-    }
-
-    public void setCameraValues(float cameraX, float cameraY){
-        this.cameraX = cameraX;
-        this.cameraY = cameraY;
-    }
-
-    public boolean canWalkHere(RectF hitbox, float deltaX, float deltaY){
-        if (hitbox.left + deltaX < 0 || hitbox.top + deltaY < 0
-                || hitbox.right + deltaX > getMapMaxWidth()
-                || hitbox.bottom + deltaY > getMapMaxHeight()){
-            return false;
-        }
-
-        Point[] tileCoords = GetTileCoords(hitbox, deltaX, deltaY);
-        int[] waterTileIds = GetTileIds(tileCoords, 0);
-        int[] hillTileIds = GetTileIds(tileCoords, 1);
-
-        if(!IsTilesWalkable(waterTileIds, 0)){
-            return false;
-        }
-        if(!IsTilesWalkable(hillTileIds, 1)){
-            return false;
-        }
-        return true;
-    }
-
-    private static Point[] GetTileCoords(RectF hitbox, float deltaX, float deltaY){
-        Point[] tileCoords = new Point[4];
-
-        int left = (int) ((hitbox.left + deltaX) / TILE_SIZE);
-        int right = (int) ((hitbox.right + deltaX) / TILE_SIZE);
-        int top = (int) ((hitbox.top + deltaY) / TILE_SIZE);
-        int bottom = (int) ((hitbox.bottom + deltaY) / TILE_SIZE);
-
-        tileCoords[0] = new Point(left, top);
-        tileCoords[1] = new Point(right, top);
-        tileCoords[2] = new Point(left, bottom);
-        tileCoords[3] = new Point(right, bottom);
-
-        return tileCoords;
-    }
-
-    private int[] GetTileIds(Point[] tileCoords, int tileType){
-        int[] tileIds = new int[4];
-
-        for (int i = 0; i < tileCoords.length; i++) {
-            if(tileType == 0){
-                tileIds[i] = currentWater.getSpriteId(tileCoords[i].x, tileCoords[i].y);
-            } else{
-                tileIds[i] = currentHills.getSpriteId(tileCoords[i].x, tileCoords[i].y);
-            }
-        }
-        return tileIds;
-    }
-
-    public static boolean IsTilesWalkable(int[] tileIds, int tileType){
-        for(int i : tileIds){
-            if(!IsTileWalkable(i, tileType)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean IsTileWalkable(int tileID, int tileType){
-        if(tileType == 0){
-            if(tileID != 4){
-                return false;
-            }
-        } else{
-            if(tileID == 0 || tileID == 1 || tileID == 2
-                || tileID == 11 || tileID == 13 || tileID == 22
-                || tileID == 23 || tileID == 24){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-//    public boolean canWalkHere(float x, float y){
-//        if(x < 0 || y < 0){
-//            return false;
-//        }
-//
-//        if(x > getMapMaxWidth() || y > getMapMaxHeight()){
-//            return false;
-//        }
-//
-//        int tileX = (int) x / TILE_SIZE;
-//        int tileY = (int) y / TILE_SIZE;
-//        int dirtTileIndexVal = currentDirt.getSpriteId(tileX, tileY);
-//        if(dirtTileIndexVal == 3 || dirtTileIndexVal == 8 || dirtTileIndexVal == 10
-//                || dirtTileIndexVal == 33 || dirtTileIndexVal == 34  || dirtTileIndexVal == 35){
-//            return false;
-//        }
-//        int hillTileIndexVal = currentHills.getSpriteId(tileX, tileY);
-//        if(hillTileIndexVal == 0 || hillTileIndexVal == 1 || hillTileIndexVal == 2
-//                || hillTileIndexVal == 11 || hillTileIndexVal == 13 || hillTileIndexVal == 22
-//                || hillTileIndexVal == 23 || hillTileIndexVal == 24){
-//            return false;
-//        }
-//
-//        return true;
-//    }
-
-    public int getMapMaxWidth(){
-        return currentDirt.getArrayWidth() * TILE_SIZE;
-    }
-
-    public int getMapMaxHeight(){
-        return currentDirt.getArrayHeight() * TILE_SIZE;
+        currentMap = new GameMap(mapLayers, decorationArrayList);
     }
 }

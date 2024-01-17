@@ -1,6 +1,10 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.Utils;
 
+import android.content.Context;
+
 public final class GameConstants {
+//    public static Context CURRENT_CONTEXT;
+//    public static long INIT_TIME;
     public static final class FaceDir{
         public static final int WALK_RIGHT = 6;
         public static final int WALK_LEFT = 7;

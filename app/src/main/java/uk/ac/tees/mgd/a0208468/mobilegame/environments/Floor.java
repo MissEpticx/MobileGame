@@ -18,6 +18,7 @@ public enum Floor implements BitmapMethods {
     WATER(R.drawable.water_sprite_sheet, 5, 1);
 
     private Bitmap[] sprites;
+    private boolean isOccupied;
     Floor(int resID, int tilesInWidth, int tilesInHeight){
         options.inScaled = false;
         sprites = new Bitmap[tilesInHeight * tilesInWidth];
@@ -32,5 +33,13 @@ public enum Floor implements BitmapMethods {
 
     public Bitmap getSprite(int id){
         return sprites[id];
+    }
+
+    public void setIsOccupied(boolean isOccupied) {
+        this.isOccupied = isOccupied;
+    }
+
+    public boolean getIsOccupied(){
+        return isOccupied;
     }
 }

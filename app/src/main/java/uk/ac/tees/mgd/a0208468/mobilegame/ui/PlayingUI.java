@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
+import uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.InteractablesManager;
 import uk.ac.tees.mgd.a0208468.mobilegame.gamestates.Playing;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.Game;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
@@ -37,7 +38,7 @@ public class PlayingUI {
                 null);
     }
 
-    public void touchEvents(MotionEvent event){
+    public void touchEvents(MotionEvent event, InteractablesManager interactManager){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN :
                 //  Using Trigonometry to determine if touch down is within the joystick circle or not.
@@ -55,6 +56,8 @@ public class PlayingUI {
                 } else{
                     if(isIn(event, buttonHome)){
                         buttonHome.setButtonPressed(true);
+                    } else{
+                        interactManager.touchEvents(event);
                     }
                 }
                 break;
