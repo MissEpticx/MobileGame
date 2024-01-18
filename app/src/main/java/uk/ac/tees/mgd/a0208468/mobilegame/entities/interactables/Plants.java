@@ -8,11 +8,10 @@ import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 
 public enum Plants implements BitmapMethods {
-    CARROT(0, 0, 15, 12),
-    EGGPLANT(0, 13, 12, 14),
-    TURNIP(0, 27, 13, 15),
-    PUMPKIN(0, 42, 16, 16),
-    WHEAT(0, 58, 10, 29);
+    CARROT(0, 0, 16, 16),
+    EGGPLANT(0, 16, 16, 16),
+    TURNIP(0, 32, 16, 16),
+    PUMPKIN(0, 48, 16, 16);
 
     private Bitmap sapling, stage1, stage2, fullGrown;
     private int width, height;

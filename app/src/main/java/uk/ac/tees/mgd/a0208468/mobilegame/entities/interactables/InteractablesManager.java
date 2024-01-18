@@ -5,6 +5,9 @@ import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFA
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.SCALE_MULTIPLIER;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.CARROT;
+import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.EGGPLANT;
+import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.PUMPKIN;
+import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.TURNIP;
 import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_HEIGHT;
 import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
 
@@ -17,6 +20,7 @@ import android.view.MotionEvent;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decoration;
@@ -38,6 +42,12 @@ public class InteractablesManager {
         this.plants = new HashSet<>();
     }
 
+    public void updatePlants(double delta){
+        for (Plant plant : plants){
+            plant.updatePlantStage(delta);
+        }
+    }
+
     public void draw(Canvas canvas){
         if(plants != null){
             for(Plant plant : plants){
@@ -56,7 +66,22 @@ public class InteractablesManager {
     }
 
     private void spawnSapling(float x, float y){
-        plants.add(new Plant(new PointF(x, y), CARROT));
+        int randomVal = new Random().nextInt(4);
+        switch (randomVal){
+            case 0:
+                plants.add(new Plant(new PointF(x, y), CARROT));
+                break;
+            case 1:
+                plants.add(new Plant(new PointF(x, y), TURNIP));
+                break;
+            case 2:
+                plants.add(new Plant(new PointF(x, y), EGGPLANT));
+                break;
+            case 3:
+                plants.add(new Plant(new PointF(x, y), PUMPKIN));
+                break;
+        }
+
     }
 
     public void setCameraValues(float cameraX, float cameraY){

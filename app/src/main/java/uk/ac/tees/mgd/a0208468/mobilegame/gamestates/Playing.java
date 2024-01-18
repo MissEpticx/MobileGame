@@ -31,6 +31,7 @@ public class Playing extends BaseState implements GameStateInterface {
     private PointF lastTouchDiff;
     private Paint paint = new Paint();
     private PlayingUI playingUI;
+    private float plantTimer;
 
     public Playing(Game game){
         super(game);
@@ -50,6 +51,7 @@ public class Playing extends BaseState implements GameStateInterface {
         mapManager.setCameraValues(cameraX, cameraY);
         interactManager.setCameraValues(cameraX, cameraY);
         updateAnimation(delta);
+        updatePlants(delta);
     }
 
     @Override
@@ -143,5 +145,9 @@ public class Playing extends BaseState implements GameStateInterface {
                 waterAnimX = 0;
             }
         }
+    }
+
+    private void updatePlants(double delta){
+        interactManager.updatePlants(delta);
     }
 }

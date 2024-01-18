@@ -16,6 +16,7 @@ public class Player extends Character{
 
     public void update(double delta, boolean movePlayer){
         if(!movePlayer) {
+            CHAR_SPEED = 7;
             switch (faceDir) {
                 case GameConstants.FaceDir.WALK_RIGHT:
                     setFaceDir(GameConstants.FaceDir.IDLE_RIGHT);
@@ -30,6 +31,8 @@ public class Player extends Character{
                     setFaceDir(GameConstants.FaceDir.IDLE_DOWN);
                     break;
             }
+        } else{
+            CHAR_SPEED = 4;
         }
 
         updateAnimation(delta);
