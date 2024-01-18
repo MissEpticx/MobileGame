@@ -30,7 +30,6 @@ public final class GameConstants {
     }
 
     public static final class Animation{}
-    public static int CHAR_SPEED = 2;
-    public static final int WATER_SPEED = 4;
+    public static int CHAR_SPEED = 4;
     public static final int AMOUNT = 8;
 }

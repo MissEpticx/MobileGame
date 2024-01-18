@@ -1,6 +1,7 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.SCALE_MULTIPLIER;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -12,7 +13,7 @@ public class Plant extends Entity {
     private Plants plantType;
     private int stage;
     public Plant(PointF pos, Plants plantType){
-        super(pos, plantType.getWidth() * SCALE_MULTIPLIER, plantType.getHeight() * SCALE_MULTIPLIER);
+        super(pos, plantType.getWidth() * TILE_SIZE, plantType.getHeight() * TILE_SIZE);
         this.plantType = plantType;
         this.stage = 0;
     }
