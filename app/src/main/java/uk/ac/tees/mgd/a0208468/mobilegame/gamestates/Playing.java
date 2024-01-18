@@ -31,7 +31,6 @@ public class Playing extends BaseState implements GameStateInterface {
     private PointF lastTouchDiff;
     private Paint paint = new Paint();
     private PlayingUI playingUI;
-    private float plantTimer;
 
     public Playing(Game game){
         super(game);

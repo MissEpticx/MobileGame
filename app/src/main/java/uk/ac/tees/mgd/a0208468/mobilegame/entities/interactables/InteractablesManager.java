@@ -15,6 +15,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.service.quicksettings.Tile;
 import android.view.MotionEvent;
 
 import java.sql.SQLOutput;
@@ -35,23 +36,29 @@ public class InteractablesManager {
     private MapManager mapManager;
     private Playing playing;
     private static Point lastTouchedTileSpace;
+    private ArrayList<Decoration> decorationArrayList;
     private GameMap map;
     public InteractablesManager(Playing playing, MapManager mapManager){
         this.mapManager = mapManager;
+        this.decorationArrayList = mapManager.getCurrentMap().getDecorationArrayList();
         this.playing = playing;
         this.plants = new HashSet<>();
     }
 
     public void updatePlants(double delta){
-        for (Plant plant : plants){
-            plant.updatePlantStage(delta);
+        synchronized (plants) {
+            for (Plant plant : plants) {
+                plant.updatePlantStage(delta);
+            }
         }
     }
 
     public void draw(Canvas canvas){
         if(plants != null){
-            for(Plant plant : plants){
-                canvas.drawBitmap(plant.getPlantType().getImage(plant.getStage()), plant.getHitbox().left + cameraX, plant.getHitbox().top + cameraY, null);
+            synchronized (plants) {
+                for (Plant plant : plants) {
+                    canvas.drawBitmap(plant.getPlantType().getImage(plant.getStage()), plant.getHitbox().left + cameraX, plant.getHitbox().top + cameraY, null);
+                }
             }
         }
     }
@@ -65,7 +72,7 @@ public class InteractablesManager {
         }
     }
 
-    private void spawnSapling(float x, float y){
+    private synchronized void spawnSapling(float x, float y){
         int randomVal = new Random().nextInt(4);
         switch (randomVal){
             case 0:
@@ -81,7 +88,6 @@ public class InteractablesManager {
                 plants.add(new Plant(new PointF(x, y), PUMPKIN));
                 break;
         }
-
     }
 
     public void setCameraValues(float cameraX, float cameraY){
@@ -96,6 +102,23 @@ public class InteractablesManager {
 
         int dirtId = map.getMapLayer("Dirt").getSpriteId(tileInGrid.x, tileInGrid.y);
         int grassId = map.getMapLayer("Grass").getSpriteId(tileInGrid.x, tileInGrid.y);
+
+        for(Decoration deco : decorationArrayList){
+            if(deco.getHitbox().contains(touchX - cameraX, touchY - cameraY)){
+                return false;
+            }
+        }
+
+        synchronized (plants){
+            for(Plant plant : plants){
+                if(plant.getHitbox().contains(touchX - cameraX, touchY - cameraY)){
+                    if(plant.getStage() >= 3){
+                        plants.remove(plant);
+                    }
+                    return false;
+                }
+            }
+        }
 
         if(dirtId == 12 && grassId == 10){
             return true;

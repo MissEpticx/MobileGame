@@ -1,5 +1,6 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables;
 
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_TILE_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.SCALE_MULTIPLIER;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 
@@ -14,7 +15,7 @@ public class Plant extends Entity {
     private int stage;
     private float growTimer;
     public Plant(PointF pos, Plants plantType){
-        super(pos, plantType.getWidth() * TILE_SIZE, plantType.getHeight() * TILE_SIZE);
+        super(pos, plantType.getWidth() * SCALE_MULTIPLIER, plantType.getHeight() * SCALE_MULTIPLIER);
         this.plantType = plantType;
         this.stage = 0;
         this.growTimer = 0f;
@@ -22,11 +23,11 @@ public class Plant extends Entity {
 
     public void updatePlantStage(double delta){
         growTimer++;
-        if(growTimer + delta >= 500f && stage == 0){
+        if(growTimer + delta >= 400f && stage == 0){
             setStage(1);
-        } else if (growTimer + delta >= 1500f && stage == 1) {
+        } else if (growTimer + delta >= 1200f && stage == 1) {
             setStage(2);
-        } else if (growTimer + delta >= 3000f && stage == 2) {
+        } else if (growTimer + delta >= 2500f && stage == 2) {
             setStage(3);
         }
     }
