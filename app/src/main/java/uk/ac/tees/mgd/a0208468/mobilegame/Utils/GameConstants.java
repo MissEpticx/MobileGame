@@ -5,6 +5,7 @@ import android.content.Context;
 public final class GameConstants {
 //    public static Context CURRENT_CONTEXT;
 //    public static long INIT_TIME;
+    public static final String API_KEY = "2bfd2f34bf2984a2847457f84e18776c";
     public static final class FaceDir{
         public static final int WALK_RIGHT = 6;
         public static final int WALK_LEFT = 7;
@@ -29,7 +30,9 @@ public final class GameConstants {
         public static final int Y_DRAW_OFFSET = 1 * SCALE_MULTIPLIER;
     }
 
-    public static final class Animation{}
-    public static int CHAR_SPEED = 4;
-    public static final int AMOUNT = 8;
+    public static final class Animation{
+        public static int CHAR_SPEED = 4;
+        public static final int AMOUNT = 8;
+    }
+
 }

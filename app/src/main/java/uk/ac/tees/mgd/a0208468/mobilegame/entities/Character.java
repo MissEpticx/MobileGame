@@ -1,7 +1,7 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.entities;
 
-import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.AMOUNT;
-import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.CHAR_SPEED;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Animation.AMOUNT;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Animation.CHAR_SPEED;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.CHAR_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_CHAR_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.HITBOX_SIZE;
