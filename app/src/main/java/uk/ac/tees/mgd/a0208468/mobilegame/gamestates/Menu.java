@@ -1,15 +1,11 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.gamestates;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.UI_SCALE_MULTIPLIER;
-import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.MENU_CLOSE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.MENU_PLAY;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.MAIN_MENU_BOARD;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.hardware.SensorEvent;
 import android.view.MotionEvent;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.GameStateInterface;
@@ -23,7 +19,7 @@ public class Menu extends BaseState implements GameStateInterface {
     private int menuY = 50;
     private int buttonPlayX = menuX + ((MAIN_MENU_BOARD.getImage().getWidth() / 2) - (MENU_PLAY.getWidth() * (UI_SCALE_MULTIPLIER / 2)));
     private int buttonPlayY = menuY + 350;
-    private int buttonCloseX = menuX + ((MAIN_MENU_BOARD.getImage().getWidth() / 2) - (MENU_PLAY.getWidth() * (UI_SCALE_MULTIPLIER / 2)));
+    private int buttonCloseX = menuX + ((MAIN_MENU_BOARD.getImage().getWidth() / 2) - (MENU_CLOSE.getWidth() * (UI_SCALE_MULTIPLIER / 2)));
     private int buttonCloseY = buttonPlayY + MENU_PLAY.getHeight() + 250;
     public Menu(Game game){
         super(game);
@@ -42,11 +38,11 @@ public class Menu extends BaseState implements GameStateInterface {
                 menuY,
                 null);
 
-        canvas.drawBitmap(MENU_PLAY.getButtonImg(buttonPlay.isButtonPressed()),
+        canvas.drawBitmap(MENU_PLAY.getButtonImg(buttonPlay.isButtonPressed(), false),
                 buttonPlay.getHitbox().left,
                 buttonPlay.getHitbox().top,
                 null);
-        canvas.drawBitmap(MENU_CLOSE.getButtonImg(buttonClose.isButtonPressed()),
+        canvas.drawBitmap(MENU_CLOSE.getButtonImg(buttonClose.isButtonPressed(), false),
                 buttonClose.getHitbox().left,
                 buttonClose.getHitbox().top,
                 null);

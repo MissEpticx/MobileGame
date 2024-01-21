@@ -7,7 +7,9 @@ import android.graphics.RectF;
 public class CustomButton {
     private final RectF hitbox;
     private boolean buttonPressed = false;
+    private boolean isLocked = true;
     public CustomButton(float x, float y, float width, float height){
+
         float scaledWidth = width * UI_SCALE_MULTIPLIER;
         float scaledHeight = height * UI_SCALE_MULTIPLIER;
         hitbox = new RectF(x, y, x + scaledWidth, y + scaledHeight);
@@ -23,5 +25,9 @@ public class CustomButton {
 
     public void setButtonPressed(boolean buttonPressed){
         this.buttonPressed = buttonPressed;
+    }
+    public boolean isLocked(){return isLocked;}
+    public void setIsLocked(boolean isLocked){
+        this.isLocked = isLocked;
     }
 }

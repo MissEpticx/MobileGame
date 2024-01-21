@@ -15,7 +15,9 @@ public enum Floor implements BitmapMethods {
     HILL(R.drawable.grass_hill_tileset, 11, 7),
     SLOPES(R.drawable.grass_hill_slopes_tileset, 6, 3),
     BUSHES(R.drawable.bush_tileset, 11, 11),
-    WATER(R.drawable.water_sprite_sheet, 5, 1);
+    WATER(R.drawable.water_sprite_sheet, 5, 1),
+    BASE_RAIN(R.drawable.rain_long, 8, 1),
+    QUICK_RAIN(R.drawable.rain_short, 8, 1);
 
     private Bitmap[] sprites;
     private boolean isOccupied;
@@ -23,23 +25,24 @@ public enum Floor implements BitmapMethods {
         options.inScaled = false;
         sprites = new Bitmap[tilesInHeight * tilesInWidth];
         Bitmap spriteSheet = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options);
-        for(int j = 0; j < tilesInHeight; j++){
-            for(int i = 0; i < tilesInWidth; i++){
-                int index = j * tilesInWidth + i;
-                sprites[index] = getScaledBitmap(Bitmap.createBitmap(spriteSheet, DEFAULT_TILE_SIZE * i, DEFAULT_TILE_SIZE * j, DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE));
+        if(resID == R.drawable.rain){
+            for(int j = 0; j < tilesInHeight; j++){
+                for(int i = 0; i < tilesInWidth; i++){
+                    int index = j * tilesInWidth + i;
+                    sprites[index] = getScaledBitmap(Bitmap.createBitmap(spriteSheet, DEFAULT_TILE_SIZE * i, DEFAULT_TILE_SIZE * j, DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE));
+                }
+            }
+        } else{
+            for(int j = 0; j < tilesInHeight; j++){
+                for(int i = 0; i < tilesInWidth; i++){
+                    int index = j * tilesInWidth + i;
+                    sprites[index] = getScaledBitmap(Bitmap.createBitmap(spriteSheet, DEFAULT_TILE_SIZE * i, DEFAULT_TILE_SIZE * j, DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE));
+                }
             }
         }
     }
 
     public Bitmap getSprite(int id){
         return sprites[id];
-    }
-
-    public void setIsOccupied(boolean isOccupied) {
-        this.isOccupied = isOccupied;
-    }
-
-    public boolean getIsOccupied(){
-        return isOccupied;
     }
 }

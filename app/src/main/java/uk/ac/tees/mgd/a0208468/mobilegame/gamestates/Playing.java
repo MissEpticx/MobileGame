@@ -4,6 +4,9 @@ import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFA
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.X_DRAW_OFFSET;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.Y_DRAW_OFFSET;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.IS_RAINING;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.RAIN_FRAME;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.RAIN_QUICK_FRAME;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -24,8 +27,8 @@ public class Playing extends BaseState implements GameStateInterface {
     private InteractablesManager interactManager;
     private Player player;
     private  int waterAnimX;
-    private int waterAniTick;
-    private int waterAniSpeed = 4;
+    private int waterAniTick, rainAniTick, rainQuickAniTick;
+    private int waterAniSpeed = 5, rainAniSpeed = 2, rainQuickAniSpeed = 0;
     private boolean movePlayer;
     private float cameraX, cameraY;
     private PointF lastTouchDiff;
@@ -58,6 +61,9 @@ public class Playing extends BaseState implements GameStateInterface {
         mapManager.draw(canvas, waterAnimX);
         interactManager.draw(canvas);
         drawPlayer(canvas);
+        if(IS_RAINING){
+            mapManager.drawRain(canvas);
+        }
         playingUI.draw(canvas);
     }
 
@@ -142,6 +148,26 @@ public class Playing extends BaseState implements GameStateInterface {
             waterAnimX++;
             if(waterAnimX >= 4){
                 waterAnimX = 0;
+            }
+        }
+
+        rainAniTick++;
+
+        if(rainAniTick >= rainAniSpeed){
+            rainAniTick = 0;
+            RAIN_FRAME++;
+            if(RAIN_FRAME >= 8){
+                RAIN_FRAME = 0;
+            }
+        }
+
+        rainQuickAniTick++;
+
+        if(rainQuickAniTick >= rainQuickAniSpeed){
+            rainQuickAniTick = 0;
+            RAIN_QUICK_FRAME++;
+            if(RAIN_QUICK_FRAME >= 8){
+                RAIN_QUICK_FRAME = 0;
             }
         }
     }

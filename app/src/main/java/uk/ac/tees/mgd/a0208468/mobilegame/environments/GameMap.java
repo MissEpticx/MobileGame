@@ -18,6 +18,10 @@ public class GameMap {
         this.decorationArrayList = decorationArrayList;
     }
 
+    public GameMap(Map<String, MapLayer> mapLayers){
+        this.mapLayers = mapLayers;
+    }
+
     public Set<String> getKeys(){
         return mapLayers.keySet();
     }

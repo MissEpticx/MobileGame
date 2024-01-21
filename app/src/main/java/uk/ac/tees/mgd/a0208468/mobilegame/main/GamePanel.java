@@ -25,7 +25,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
 
-        game.startGameLoop();
+        game.startGameLoop(getContext());
     }
 
     @Override

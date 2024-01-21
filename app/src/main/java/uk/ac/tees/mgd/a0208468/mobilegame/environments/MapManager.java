@@ -1,6 +1,8 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.environments;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.RAIN_FRAME;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.RAIN_QUICK_FRAME;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations.BOULDER;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations.HOUSE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations.PEBBLE;
@@ -23,6 +25,7 @@ import uk.ac.tees.mgd.a0208468.mobilegame.gamestates.Playing;
 
 public class MapManager {
     private GameMap currentMap;
+    private GameMap rainMap;
     private float cameraX, cameraY;
     private Playing playing;
     private Paint paint = new Paint();
@@ -44,12 +47,30 @@ public class MapManager {
                     MapLayer layer = currentMap.getMapLayer(key);
                     if(j > 0 && i > 0){
                         if(key.contains("Water")){
-
                             Bitmap draw = layer.getFloorType().getSprite(currentMap.getAnimSpriteId(layer, j, i, waterAnimX));
                             canvas.drawBitmap(draw, (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
                         } else{
                             canvas.drawBitmap(layer.getFloorType().getSprite(currentMap.getSpriteId(layer, j, i)), (j * TILE_SIZE) + cameraX, (i * TILE_SIZE) + cameraY, null);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    public void drawRain(Canvas canvas){
+        for(String key : rainMap.getKeys()){
+            for (int i = 0; i < rainMap.getArrayHeight(key); i++) {
+                for (int j = 0; j < rainMap.getArrayWidth(key); j++) {
+                    MapLayer layer = rainMap.getMapLayer(key);
+                    if(j > 0 && i > 0){
+                        Bitmap draw;
+                        if(key.contains("Quick")){
+                            draw = layer.getFloorType().getSprite(rainMap.getAnimSpriteId(layer, j, i, RAIN_QUICK_FRAME));
+                        } else{
+                            draw = layer.getFloorType().getSprite(rainMap.getAnimSpriteId(layer, j, i, RAIN_FRAME));
+                        }
+                        canvas.drawBitmap(draw, (j * TILE_SIZE) - (TILE_SIZE * 2), (i * TILE_SIZE) - (TILE_SIZE * 2), null);
                     }
                 }
             }
@@ -155,9 +176,10 @@ public class MapManager {
         decorationArrayList = new ArrayList<>();
         decorationArrayList.add(new Decoration(new PointF(3375, 400), HOUSE));
         decorationArrayList.add(new Decoration(new PointF(1000, 800), PEBBLE));
-        decorationArrayList.add(new Decoration(new PointF(2000, 1500), BOULDER));
+        decorationArrayList.add(new Decoration(new PointF(2000, 1550), BOULDER));
         decorationArrayList.add(new Decoration(new PointF(4100, 1000), SUNFLOWER));
 
+        // Gridded Map in layers to determine the sprite ID within each square space of each ground type
         int[][] bushSpriteIds = {
                 { 0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2},
                 {11, 16, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 17, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 13},
@@ -319,6 +341,36 @@ public class MapManager {
                 {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12}
         };
 
+        // Basic gridded layers to allow an animated overlay for rain effect - 2 layers at different speeds to be less uniform in its appearance
+        int[][] rainLongSpriteIds = {
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0}
+        };
+
+        int[][] rainShortSpriteIds = {
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0}
+        };
+
+        // Creating map layers and adding to a Map to easily identify each layer within a single GameMap type.
         MapLayer water = new MapLayer(waterSpriteIds, Floor.WATER);
         MapLayer waterEdges = new MapLayer(waterLedgeSpriteIds, Floor.WATER);
         MapLayer dirt = new MapLayer(dirtSpriteIds, Floor.DIRT);
@@ -337,5 +389,12 @@ public class MapManager {
         mapLayers.put("Bushes", bushes);
 
         currentMap = new GameMap(mapLayers, decorationArrayList);
+
+        MapLayer rain = new MapLayer(rainLongSpriteIds, Floor.BASE_RAIN);
+        MapLayer rainQuick = new MapLayer(rainShortSpriteIds, Floor.QUICK_RAIN);
+        Map<String, MapLayer> rainLayer = new LinkedHashMap<>();
+        rainLayer.put("Rain", rain);
+        rainLayer.put("Quick", rainQuick);
+        rainMap = new GameMap(rainLayer);
     }
 }

@@ -8,11 +8,16 @@ import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 
 public enum GameImages implements BitmapMethods {
-    MAIN_MENU_BOARD(R.drawable.mainmenu_board);
+    MAIN_MENU_BOARD(R.drawable.mainmenu_board),
+    INVENTORY_BAR(R.drawable.inventory_bar);
     private final Bitmap image;
     GameImages(int resID){
         options.inScaled = false;
-        image = getScaledBitmapUI(BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options), 8);
+        if(resID == R.drawable.inventory_bar){
+            image = getScaledBitmapUI(BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options), 6);
+        } else{
+            image = getScaledBitmapUI(BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options), 8);
+        }
     }
 
     public Bitmap getImage(){

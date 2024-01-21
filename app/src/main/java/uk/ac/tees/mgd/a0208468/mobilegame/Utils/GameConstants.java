@@ -3,9 +3,13 @@ package uk.ac.tees.mgd.a0208468.mobilegame.Utils;
 import android.content.Context;
 
 public final class GameConstants {
-//    public static Context CURRENT_CONTEXT;
-//    public static long INIT_TIME;
-    public static final String API_KEY = "2bfd2f34bf2984a2847457f84e18776c";
+    public static final class Weather{
+        public static final String API_KEY = "2bfd2f34bf2984a2847457f84e18776c";
+        public static int RAIN_FRAME = 0;
+        public static int RAIN_QUICK_FRAME = 4;
+        public static boolean IS_RAINING;
+    }
+
     public static final class FaceDir{
         public static final int WALK_RIGHT = 6;
         public static final int WALK_LEFT = 7;
@@ -24,7 +28,7 @@ public final class GameConstants {
         public static final int CHAR_SIZE = DEFAULT_CHAR_SIZE * SCALE_MULTIPLIER;
         public static final int HITBOX_SIZE = 12 * SCALE_MULTIPLIER;
         public static final int DEFAULT_TILE_SIZE = 16;
-        public static final int UI_SCALE_MULTIPLIER = 6;
+        public static int UI_SCALE_MULTIPLIER = 6;
         public static final int TILE_SIZE = DEFAULT_TILE_SIZE * SCALE_MULTIPLIER;
         public static final int X_DRAW_OFFSET = 1 * SCALE_MULTIPLIER;
         public static final int Y_DRAW_OFFSET = 1 * SCALE_MULTIPLIER;

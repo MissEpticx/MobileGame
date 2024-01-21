@@ -1,10 +1,15 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.main;
 
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.IS_RAINING;
+
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import uk.ac.tees.mgd.a0208468.mobilegame.R;
 import uk.ac.tees.mgd.a0208468.mobilegame.gamestates.Menu;
 import uk.ac.tees.mgd.a0208468.mobilegame.gamestates.Playing;
 
@@ -14,12 +19,12 @@ public class Game {
     private Menu menu;
     private Playing playing;
     private GameState currentGameState = GameState.MENU;
+    private MediaPlayer mediaPlayer;
 
     public Game(SurfaceHolder holder){
         this.holder = holder;
         gameLoop = new GameLoop(this);
         initGameStates();
-
     }
 
     public boolean touchEvent(MotionEvent event){
@@ -68,8 +73,15 @@ public class Game {
         playing = new Playing(this);
     }
 
-    public void startGameLoop() {
+    public void startGameLoop(Context context) {
         gameLoop.startGameLoop();
+        if(IS_RAINING){
+            mediaPlayer = MediaPlayer.create(context, R.raw.raining_music);
+        } else {
+            mediaPlayer = MediaPlayer.create(context, R.raw.standard_music);
+        }
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
     }
 
     public enum GameState{

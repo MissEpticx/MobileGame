@@ -1,6 +1,7 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.main;
 
-import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.API_KEY;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.API_KEY;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.IS_RAINING;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
             return;
         }
+
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
@@ -92,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     System.out.println("Current lat: " + latitude + " || long: " + longitude);
-                    reverseGeocode();
-
+                    openWeatherMapService = WeatherAPIClient.getInstance().create(OpenWeatherMapService.class);
+                    loadWeatherInfo();
                 } else{
                     System.out.println("No Location Found!");
                 }
@@ -127,14 +129,12 @@ public class MainActivity extends AppCompatActivity {
                     String subLocality = namedLocation.getSubLocality();
 
                     locationInfo = String.format("[%s][%s][%s][%s]", adminArea, subAdminArea, cityName, subLocality);
-                    System.out.println("Current Location = " + locationInfo);
                 }
             }
         } catch (IOException e){
             Log.e("GPS", "Failed to get address", e);
         }
-        openWeatherMapService = WeatherAPIClient.getInstance().create(OpenWeatherMapService.class);
-        loadWeatherInfo();
+
     }
 
     private void loadWeatherInfo(){
@@ -153,8 +153,13 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("description: " + data.getWeather().get(0).getDescription());
                     System.out.println("icon: " + data.getWeather().get(0).getIcon());
                     if(data.getRain() != null){
+                        IS_RAINING = true;
+                        System.out.println("Is Raining: " + IS_RAINING);
                         System.out.println("rain: " + data.getRain().getHour());
                         System.out.println("rain 3h: " + data.getRain().getThreeHours());
+                    } else{
+                        IS_RAINING = false;
+                        System.out.println("Is Raining: " + IS_RAINING);
                     }
                 } else{
                     System.out.println("Failed to obtain weather information");
