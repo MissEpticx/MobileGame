@@ -5,6 +5,7 @@ import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFA
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import uk.ac.tees.mgd.a0208468.mobilegame.main.GameActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.R;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
@@ -17,7 +18,7 @@ public enum GameCharacter implements BitmapMethods {
 
     GameCharacter(int resID) {
         options.inScaled = false;
-        spriteSheet = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options);
+        spriteSheet = BitmapFactory.decodeResource(GameActivity.getGameContext().getResources(), resID, options);
         for(int j = 0; j < sprites.length; j++){
             for(int i = 0; i < sprites[j].length; i++){
                 sprites[j][i] = getScaledBitmap(Bitmap.createBitmap(spriteSheet, DEFAULT_CHAR_SIZE * i, DEFAULT_CHAR_SIZE * j, DEFAULT_CHAR_SIZE, DEFAULT_CHAR_SIZE));

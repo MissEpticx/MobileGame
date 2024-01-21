@@ -1,6 +1,7 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.main;
 
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.IS_RAINING;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Weather.WEATHER_SET;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -20,6 +21,7 @@ public class Game {
     private Playing playing;
     private GameState currentGameState = GameState.MENU;
     private MediaPlayer mediaPlayer;
+    private boolean musicPlaying;
 
     public Game(SurfaceHolder holder){
         this.holder = holder;
@@ -50,6 +52,10 @@ public class Game {
             case CLOSE:
                 System.exit(0);
         }
+
+        if(WEATHER_SET && !musicPlaying){
+            startMusic();
+        }
     }
 
     public void render(){
@@ -75,11 +81,21 @@ public class Game {
 
     public void startGameLoop(Context context) {
         gameLoop.startGameLoop();
+    }
+    private void startMusic(){
+        musicPlaying = true;
+        int resId;
         if(IS_RAINING){
-            mediaPlayer = MediaPlayer.create(context, R.raw.raining_music);
+            System.out.println("raining music");
+            resId = R.raw.raining_music;
+
         } else {
-            mediaPlayer = MediaPlayer.create(context, R.raw.standard_music);
+            resId = R.raw.standard_music;
+            System.out.println("standard music");
         }
+
+        mediaPlayer = MediaPlayer.create(GameActivity.getGameContext(), resId);
+        System.out.println("play music");
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }

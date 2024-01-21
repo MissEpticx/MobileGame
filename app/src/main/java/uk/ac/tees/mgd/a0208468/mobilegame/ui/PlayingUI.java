@@ -1,29 +1,41 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.ui;
 
-import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.SCALE_MULTIPLIER;
-import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_HEIGHT;
-import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
+import static uk.ac.tees.mgd.a0208468.mobilegame.main.GameActivity.GAME_HEIGHT;
+import static uk.ac.tees.mgd.a0208468.mobilegame.main.GameActivity.GAME_WIDTH;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.CARROT_BUTTON;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.EGGPLANT_BUTTON;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.PLAYING_HOME;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.PUMPKIN_BUTTON;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.ButtonImages.TURNIP_BUTTON;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.FULL_STARS;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.HALF_STAR;
 import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.INVENTORY_BAR;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.SELECTED_PLANT;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.LEVEL_0;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.LEVEL_1;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.LEVEL_2;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.LEVEL_3;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.NO_STARS;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.ONE_HALF_STAR;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.ONE_STAR;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.TWO_HALF_STAR;
+import static uk.ac.tees.mgd.a0208468.mobilegame.ui.GameImages.TWO_STAR;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
+import uk.ac.tees.mgd.a0208468.mobilegame.entities.Player;
 import uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.InteractablesManager;
 import uk.ac.tees.mgd.a0208468.mobilegame.gamestates.Playing;
-import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 
 public class PlayingUI {
     private final Playing playing;
     private Paint circlePaint;
-    private float xCentre = (GAME_WIDTH / 12) * 10, yCentre = (MainActivity.GAME_HEIGHT / 8) * 6, radius = 100;
+    private float xCentre = (GAME_WIDTH / 12) * 10, yCentre = (GAME_HEIGHT / 8) * 6, radius = 100;
     private float xTouch, yTouch;
     private boolean touchDown;
     private CustomButton buttonHome;
@@ -31,54 +43,110 @@ public class PlayingUI {
     private CustomButton buttonTurnip;
     private CustomButton buttonEggplant;
     private CustomButton buttonPumpkin;
-    public PlayingUI(Playing playing){
+    private Player player;
+    public PlayingUI(Playing playing, Player player){
         this.playing = playing;
         circlePaint = new Paint();
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setStrokeWidth(6);
         circlePaint.setColor(Color.RED);
-
+        this.player = player;
         buttonHome = new CustomButton(125, 50, PLAYING_HOME.getWidth(), PLAYING_HOME.getHeight());
-        buttonCarrot = new CustomButton(150, 320, CARROT_BUTTON.getWidth(), CARROT_BUTTON.getHeight());
-        buttonTurnip = new CustomButton(150, 470, TURNIP_BUTTON.getWidth(), TURNIP_BUTTON.getHeight());
-        buttonEggplant = new CustomButton(150, 610, EGGPLANT_BUTTON.getWidth(), EGGPLANT_BUTTON.getHeight());
-        buttonPumpkin = new CustomButton(150, 750, PUMPKIN_BUTTON.getWidth(), PUMPKIN_BUTTON.getHeight());
+        buttonHome.setIsLocked(false);
+        buttonCarrot = new CustomButton(148, 335, CARROT_BUTTON.getWidth(), CARROT_BUTTON.getHeight());
+        buttonCarrot.setIsLocked(false);
+        buttonCarrot.setButtonPressed(true);
+        buttonTurnip = new CustomButton(148, 485, TURNIP_BUTTON.getWidth(), TURNIP_BUTTON.getHeight());
+        buttonEggplant = new CustomButton(148, 625, EGGPLANT_BUTTON.getWidth(), EGGPLANT_BUTTON.getHeight());
+        buttonPumpkin = new CustomButton(148, 765, PUMPKIN_BUTTON.getWidth(), PUMPKIN_BUTTON.getHeight());
     }
 
     public void draw(Canvas canvas){
         canvas.drawCircle(xCentre, yCentre, radius, circlePaint);
-        canvas.drawBitmap(PLAYING_HOME.getButtonImg(buttonHome.isButtonPressed(), false),
+        canvas.drawBitmap(PLAYING_HOME.getButtonImg(buttonHome.isButtonPressed(), buttonHome.isLocked()),
                 buttonHome.getHitbox().left,
                 buttonHome.getHitbox().top,
                 null);
+        drawInventory(canvas);
+        drawXpBar(canvas);
+        drawLevel(canvas);
+    }
 
-        int barX = (GAME_WIDTH / 2) - (INVENTORY_BAR.getImage().getWidth() / 2);
-        int barY = GAME_HEIGHT - (50 + INVENTORY_BAR.getImage().getHeight());
+    private void drawInventory(Canvas canvas){
         canvas.drawBitmap(INVENTORY_BAR.getImage(), 125, 300, null);
 
-        canvas.drawBitmap(CARROT_BUTTON.getButtonImg(false,
-                buttonCarrot.isLocked()),
+        canvas.drawBitmap(CARROT_BUTTON.getButtonImg(buttonCarrot.isButtonPressed(),
+                        buttonCarrot.isLocked()),
                 buttonCarrot.getHitbox().left,
                 buttonCarrot.getHitbox().top,
                 null);
 
-        canvas.drawBitmap(TURNIP_BUTTON.getButtonImg(false,
+        canvas.drawBitmap(TURNIP_BUTTON.getButtonImg(buttonTurnip.isButtonPressed(),
                         buttonTurnip.isLocked()),
                 buttonTurnip.getHitbox().left,
                 buttonTurnip.getHitbox().top,
                 null);
 
-        canvas.drawBitmap(EGGPLANT_BUTTON.getButtonImg(false,
+        canvas.drawBitmap(EGGPLANT_BUTTON.getButtonImg(buttonEggplant.isButtonPressed(),
                         buttonEggplant.isLocked()),
                 buttonEggplant.getHitbox().left,
                 buttonEggplant.getHitbox().top,
                 null);
 
-        canvas.drawBitmap(PUMPKIN_BUTTON.getButtonImg(false,
+        canvas.drawBitmap(PUMPKIN_BUTTON.getButtonImg(buttonPumpkin.isButtonPressed(),
                         buttonPumpkin.isLocked()),
                 buttonPumpkin.getHitbox().left,
                 buttonPumpkin.getHitbox().top,
                 null);
+    }
+
+    private void drawXpBar(Canvas canvas){
+        int xp = player.getXP();
+        int level = player.getLevel();
+        int maxXP = player.getMaxXp();
+        int thirdMaxXp = maxXP / 3;
+        Bitmap draw;
+//        if(xp < 50){
+//            draw = NO_STARS.getImage();
+//        } else
+        if (level == 3 && xp == maxXP) {
+            draw = FULL_STARS.getImage();
+        }else if (level != 3 && xp >= thirdMaxXp / 2 && xp < thirdMaxXp){
+            draw = HALF_STAR.getImage();
+        } else if (level != 3 && xp >= thirdMaxXp && xp < thirdMaxXp * 1.5f) {
+            draw = ONE_STAR.getImage();
+        } else if (level != 3 && xp >= thirdMaxXp * 1.5f && xp < thirdMaxXp * 2){
+            draw = ONE_HALF_STAR.getImage();
+        } else if (level != 3 && xp >= thirdMaxXp * 2 && xp < thirdMaxXp * 2.5f) {
+            draw = TWO_STAR.getImage();
+        } else if (level != 3 && xp >= thirdMaxXp * 2.5f && xp < maxXP) {
+            draw = TWO_HALF_STAR.getImage();
+        } else{
+            draw = NO_STARS.getImage();
+        }
+
+        canvas.drawBitmap(draw, (GAME_WIDTH / 4) * 3, 50, null);
+    }
+
+    private void drawLevel(Canvas canvas){
+        int level = player.getLevel();
+        Bitmap draw;
+        if(level == 0){
+            draw = LEVEL_0.getImage();
+        } else if (level == 1){
+            draw = LEVEL_1.getImage();
+            player.setMaxXp(270);
+            buttonTurnip.setIsLocked(false);
+        } else if (level == 2) {
+            draw = LEVEL_2.getImage();
+            player.setMaxXp(420);
+            buttonEggplant.setIsLocked(false);
+        } else {
+            draw = LEVEL_3.getImage();
+            player.setMaxXp(600);
+            buttonPumpkin.setIsLocked(false);
+        }
+        canvas.drawBitmap(draw, (GAME_WIDTH / 4) * 3 + (NO_STARS.getImage().getWidth() + 30), 50, null);
     }
 
     public void touchEvents(MotionEvent event, InteractablesManager interactManager){
@@ -99,6 +167,30 @@ public class PlayingUI {
                 } else{
                     if(isIn(event, buttonHome)){
                         buttonHome.setButtonPressed(true);
+                    } else if (isIn(event, buttonCarrot) && !buttonCarrot.isLocked()) {
+                        SELECTED_PLANT = 0;
+                        buttonCarrot.setButtonPressed(true);
+                        buttonTurnip.setButtonPressed(false);
+                        buttonEggplant.setButtonPressed(false);
+                        buttonPumpkin.setButtonPressed(false);
+                    } else if (isIn(event, buttonTurnip) && !buttonTurnip.isLocked()) {
+                        SELECTED_PLANT = 1;
+                        buttonTurnip.setButtonPressed(true);
+                        buttonCarrot.setButtonPressed(false);
+                        buttonEggplant.setButtonPressed(false);
+                        buttonPumpkin.setButtonPressed(false);
+                    } else if (isIn(event, buttonEggplant) && !buttonEggplant.isLocked()) {
+                        SELECTED_PLANT = 2;
+                        buttonEggplant.setButtonPressed(true);
+                        buttonCarrot.setButtonPressed(false);
+                        buttonTurnip.setButtonPressed(false);
+                        buttonPumpkin.setButtonPressed(false);
+                    } else if (isIn(event, buttonPumpkin) && !buttonPumpkin.isLocked()) {
+                        SELECTED_PLANT = 3;
+                        buttonPumpkin.setButtonPressed(true);
+                        buttonCarrot.setButtonPressed(false);
+                        buttonTurnip.setButtonPressed(false);
+                        buttonEggplant.setButtonPressed(false);
                     } else{
                         interactManager.touchEvents(event);
                     }

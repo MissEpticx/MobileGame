@@ -1,32 +1,25 @@
 package uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables;
 
-import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.CHAR_SIZE;
-import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFAULT_TILE_SIZE;
-import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.SCALE_MULTIPLIER;
+import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.SELECTED_PLANT;
 import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.TILE_SIZE;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.CARROT;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.EGGPLANT;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.PUMPKIN;
 import static uk.ac.tees.mgd.a0208468.mobilegame.entities.interactables.Plants.TURNIP;
-import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_HEIGHT;
-import static uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity.GAME_WIDTH;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.RectF;
-import android.service.quicksettings.Tile;
 import android.view.MotionEvent;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import uk.ac.tees.mgd.a0208468.mobilegame.entities.Player;
 import uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decoration;
 import uk.ac.tees.mgd.a0208468.mobilegame.environments.GameMap;
-import uk.ac.tees.mgd.a0208468.mobilegame.environments.MapLayer;
 import uk.ac.tees.mgd.a0208468.mobilegame.environments.MapManager;
 import uk.ac.tees.mgd.a0208468.mobilegame.gamestates.Playing;
 
@@ -38,11 +31,13 @@ public class InteractablesManager {
     private static Point lastTouchedTileSpace;
     private ArrayList<Decoration> decorationArrayList;
     private GameMap map;
-    public InteractablesManager(Playing playing, MapManager mapManager){
+    private Player player;
+    public InteractablesManager(Playing playing, MapManager mapManager, Player player){
         this.mapManager = mapManager;
         this.decorationArrayList = mapManager.getCurrentMap().getDecorationArrayList();
         this.playing = playing;
         this.plants = new HashSet<>();
+        this.player = player;
     }
 
     public void updatePlants(double delta){
@@ -73,8 +68,8 @@ public class InteractablesManager {
     }
 
     private synchronized void spawnSapling(float x, float y){
-        int randomVal = new Random().nextInt(4);
-        switch (randomVal){
+//        int randomVal = new Random().nextInt(4);
+        switch (SELECTED_PLANT){
             case 0:
                 plants.add(new Plant(new PointF(x, y), CARROT));
                 break;
@@ -113,7 +108,7 @@ public class InteractablesManager {
             for(Plant plant : plants){
                 if(plant.getHitbox().contains(touchX - cameraX, touchY - cameraY)){
                     if(plant.getStage() >= 3){
-                        plants.remove(plant);
+                        HarvestPlant(plant);
                     }
                     return false;
                 }
@@ -124,6 +119,11 @@ public class InteractablesManager {
             return true;
         }
         return false;
+    }
+
+    private void HarvestPlant(Plant plant){
+        plants.remove(plant);
+        player.addXP(plant.getXp());
     }
 
     private static Point GetTileInGrid(GameMap map, float touchX, float touchY, float deltaX, float deltaY){

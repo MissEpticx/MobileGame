@@ -13,6 +13,7 @@ import uk.ac.tees.mgd.a0208468.mobilegame.entities.decorations.Decorations;
 public class Plant extends Entity {
     private Plants plantType;
     private int stage;
+    private int xp;
     private float growTimer;
     private float wateringSap = 0;
     private float wateringStg1 = 0;
@@ -22,6 +23,20 @@ public class Plant extends Entity {
         this.plantType = plantType;
         this.stage = 0;
         this.growTimer = 0f;
+
+        switch (plantType){
+            case CARROT:
+                xp = 2;
+                break;
+            case TURNIP:
+                xp = 5;
+                break;
+            case EGGPLANT:
+                xp = 8;
+                break;
+            case PUMPKIN:
+                xp = 10;
+        }
     }
 
     public void updatePlantStage(double delta){
@@ -29,10 +44,9 @@ public class Plant extends Entity {
 
         // If rain is active, decrease the grow time for each stage
         if(IS_RAINING){
-            System.out.println("Raining");
-            wateringSap = 300f;
-            wateringStg1 = 800f;
-            wateringStg2 = 1500f;
+            wateringSap = 600f;
+            wateringStg1 = 1200f;
+            wateringStg2 = 2000f;
         } else{
             wateringSap = 0f;
             wateringStg1 = 0f;
@@ -55,5 +69,8 @@ public class Plant extends Entity {
     }
     public int getStage() {
         return stage;
+    }
+    public int getXp(){
+        return xp;
     }
 }

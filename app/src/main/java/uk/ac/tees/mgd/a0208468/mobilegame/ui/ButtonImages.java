@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.R;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
+import uk.ac.tees.mgd.a0208468.mobilegame.main.GameActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 
 public enum ButtonImages implements BitmapMethods {
@@ -24,8 +25,7 @@ public enum ButtonImages implements BitmapMethods {
         options.inScaled = false;
         this.width = width;
         this.height = height;
-        System.out.println("Width: " + width + " || height: " + height);
-        Bitmap buttonAtlas = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options);
+        Bitmap buttonAtlas = BitmapFactory.decodeResource(GameActivity.getGameContext().getResources(), resID, options);
         System.out.println("Bitmap Width: " + buttonAtlas.getWidth());
         standard = getScaledBitmapUI(Bitmap.createBitmap(buttonAtlas, 0, 0, width, height), scale_multiplier);
         pressed = getScaledBitmapUI(Bitmap.createBitmap(buttonAtlas, width, 0, width, height), scale_multiplier);

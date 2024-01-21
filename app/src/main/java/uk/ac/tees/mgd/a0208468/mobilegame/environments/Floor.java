@@ -5,6 +5,7 @@ import static uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants.Sprite.DEFA
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import uk.ac.tees.mgd.a0208468.mobilegame.main.GameActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.R;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
@@ -24,7 +25,7 @@ public enum Floor implements BitmapMethods {
     Floor(int resID, int tilesInWidth, int tilesInHeight){
         options.inScaled = false;
         sprites = new Bitmap[tilesInHeight * tilesInWidth];
-        Bitmap spriteSheet = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options);
+        Bitmap spriteSheet = BitmapFactory.decodeResource(GameActivity.getGameContext().getResources(), resID, options);
         if(resID == R.drawable.rain){
             for(int j = 0; j < tilesInHeight; j++){
                 for(int i = 0; i < tilesInWidth; i++){

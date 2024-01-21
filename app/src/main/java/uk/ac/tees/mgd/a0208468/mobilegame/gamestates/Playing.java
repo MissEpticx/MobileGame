@@ -14,6 +14,8 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
+import java.util.ConcurrentModificationException;
+
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.GameConstants;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.GameStateInterface;
 import uk.ac.tees.mgd.a0208468.mobilegame.entities.Player;
@@ -38,12 +40,12 @@ public class Playing extends BaseState implements GameStateInterface {
     public Playing(Game game){
         super(game);
         mapManager = new MapManager(this);
-        interactManager = new InteractablesManager(this, mapManager);
         player = new Player();
         paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
-        playingUI = new PlayingUI(this);
+        interactManager = new InteractablesManager(this, mapManager, player);
+        playingUI = new PlayingUI(this, player);
     }
 
     @Override
@@ -59,7 +61,12 @@ public class Playing extends BaseState implements GameStateInterface {
     @Override
     public void render(Canvas canvas) {
         mapManager.draw(canvas, waterAnimX);
-        interactManager.draw(canvas);
+        try{
+            interactManager.draw(canvas);
+        } catch(ConcurrentModificationException e){
+            System.out.println("ConcurrentModificationException thrown");
+        }
+
         drawPlayer(canvas);
         if(IS_RAINING){
             mapManager.drawRain(canvas);
@@ -173,6 +180,10 @@ public class Playing extends BaseState implements GameStateInterface {
     }
 
     private void updatePlants(double delta){
-        interactManager.updatePlants(delta);
+        try{
+            interactManager.updatePlants(delta);
+        } catch (ConcurrentModificationException e){
+            System.out.println("Concurrent Modification Exception thrown");
+        }
     }
 }

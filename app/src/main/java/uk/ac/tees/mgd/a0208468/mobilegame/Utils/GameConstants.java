@@ -8,6 +8,7 @@ public final class GameConstants {
         public static int RAIN_FRAME = 0;
         public static int RAIN_QUICK_FRAME = 4;
         public static boolean IS_RAINING;
+        public static boolean WEATHER_SET;
     }
 
     public static final class FaceDir{
@@ -32,10 +33,11 @@ public final class GameConstants {
         public static final int TILE_SIZE = DEFAULT_TILE_SIZE * SCALE_MULTIPLIER;
         public static final int X_DRAW_OFFSET = 1 * SCALE_MULTIPLIER;
         public static final int Y_DRAW_OFFSET = 1 * SCALE_MULTIPLIER;
+        public static int SELECTED_PLANT = 0;
     }
 
     public static final class Animation{
-        public static int CHAR_SPEED = 4;
+        public static int CHAR_SPEED = 10;
         public static final int AMOUNT = 8;
     }
 

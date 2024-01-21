@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 
 import uk.ac.tees.mgd.a0208468.mobilegame.R;
 import uk.ac.tees.mgd.a0208468.mobilegame.Utils.interfaces.BitmapMethods;
+import uk.ac.tees.mgd.a0208468.mobilegame.main.GameActivity;
 import uk.ac.tees.mgd.a0208468.mobilegame.main.MainActivity;
 
 public enum Plants implements BitmapMethods {
@@ -19,7 +20,7 @@ public enum Plants implements BitmapMethods {
         this.width = width;
         this.height = height;
         options.inScaled = false;
-        Bitmap atlas = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), R.drawable.plants, options);
+        Bitmap atlas = BitmapFactory.decodeResource(GameActivity.getGameContext().getResources(), R.drawable.plants, options);
         sapling = getScaledBitmap(Bitmap.createBitmap(atlas, x, y, width, height));
         stage1 = getScaledBitmap(Bitmap.createBitmap(atlas, width, y, width, height));
         stage2 = getScaledBitmap(Bitmap.createBitmap(atlas, width * 2, y, width, height));
